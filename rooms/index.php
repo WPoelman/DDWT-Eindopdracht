@@ -7,6 +7,9 @@
 
 include 'model.php';
 
+/* Connect to DB */
+$db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
+
 $template = Array(
     1 => Array('name' => 'Home','url' => '/DDWT-Eindopdracht/rooms/'),
     2 => Array('name' => 'Overview','url' => '/DDWT-Eindopdracht/rooms/overview/')
