@@ -28,10 +28,18 @@ $router->get('/', function () {
     printf('<h1>Landing page</h1>');
 });
 
-/* GET route: All Rooms Overview */
-$router->get('/overview', function () use ($db) {
-    /* Hier json van functie die alle kamer info ophaalt*/
-    printf('<h1>Room overview page</h1>');
+/* GET route: Contact Page */
+$router->get('/contact', function () {
+    printf('<h1>Contact info page</h1>');
+});
+
+/* GET & DELETE route: Room opt-ins*/
+$router->match('GET|DELETE', '/opt-ins', function () use ($db) {
+    /* ALLEEN BESCHIKBAAR VOOR TENANTS
+    hier functies die
+    - bestaande info kunnen ophalen
+    - bestaande info kunnen verwijderen */
+    printf('<h1>Opt-in overview page</h1>');
 });
 
 /* GET & POST route: Log In */
@@ -44,8 +52,8 @@ $router->match('GET|POST', '/login', function () use ($db){
 ////        echo json_encode($feedback);
 });
 
-/* GET & POST route: Account Overview*/
-$router->match('GET|POST', '/account/[a-z0-9_-]+', function () use ($db){
+/* GET & POST & DELETE route: Account Overview*/
+$router->match('GET|POST|DELETE', '/account/([a-z0-9_-]+)', function ($username) use ($db) {
     /* Hier json van functie die error ophaalt uit de POST route */
     printf('<h1>Account Overview page</h1>');
     /* In de route moet een functie of variable mee die de username in de url zet */
@@ -68,14 +76,29 @@ $router->match('GET|POST', '/register', function () use ($db){
 //        echo json_encode($feedback);
 });
 
-/* GET & POST route: Register*/
-$router->match('GET|POST', '/register', function () use ($db){
-    /* Hier json van functie die error ophaalt uit de POST route */
-    printf('<h1>Register page</h1>');
+/* Mount for single room views */
+$router->mount('/rooms', function () use ($router, $db) {
+    /* GET route: All Rooms Overview */
+    $router->get('/', function () use ($db) {
+        /* Hier json van functie die alle kamer info ophaalt*/
+        printf('<h1>ALL Rooms overview page</h1>');
+    });
 
-    /* Hier functie die probeert te registreren goede feedback meegeeft naar de GET*/
-//        $feedback = log_in($db, $_POST);
-//        echo json_encode($feedback);
+    /* GET route: view single room */
+    $router->get('/(\d+)', function ($room_id) use ($db) {
+        printf('<h1>Single room page</h1>');
+    });
+
+    /* GET & POST & DELETE route: edit room */
+    $router->match('GET|POST|DELETE', '/(\d+)/edit', function ($room_id) use ($db) {
+        /* ALLEEN BESCHIKBAAR VOOR OWNERS
+        hier functies die
+        - nieuwe info kunnen posten
+        - bestaande info kunnen ophalen
+        - bestaande info kunnen updaten
+        - bestaande info kunnen verwijderen */
+        printf('<h1>Single room EDIT page</h1>');
+    });
 });
 
 /* ERROR: route not found */
