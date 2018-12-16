@@ -122,6 +122,73 @@ function get_navigation($template, $active_id){
     return $navigation_exp;
 }
 
+/**
+ * Register new users and assign the values to database
+ * @param $pdo
+ * @param $form_data
+ * @return array
+ */
+function register_user($pdo, $form_data){
+    /* Check if there are no empty values */
+    if (
+        empty($form_data['username']) or
+        empty($form_data['password']) or
+        empty($form_data['firstname']) or
+        empty($form_data['lastname']) or
+        empty($form_data['birthdate']) or
+        empty($form_data['email']) or
+        empty($form_data['phonenumber'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You should fill in all required fields.'
+        ];
+    }
+
+    /* Check if user already exists*/
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
+        $stmt->execute([$form_data['username']]);
+        $user_exists = $stmt->rowCount();
+    } catch (PDOException $e){
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+
+    /* Return error message if user already exists */
+    if (!empty($user_exists)){
+        return [
+            'type' => 'danger',
+            'message' => 'The username you entered already exists!'
+        ];
+    }
+
+    /* Hash password */
+    $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
+
+    /* Save user to database */
+    try {
+        $stmt = $pdo->prepare('INSERT INTO user (username, password, firstname, lastname) VALUES (?, ?, ?, ?)');
+        $stmt->execute([$form_data['username'], $password, $form_data['firstname'], $form_data['lastname']]);
+        $user_id = $pdo->lastInsertId();
+    } catch (PDOException $e) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+
+    /* Login user and redirect */
+    session_start();
+    $_SESSION['user_id'] = $user_id;
+    $feedback = [
+        'type' => 'success',
+        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['user_id']))
+    ];
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+}
 
 /**
  * Add room to the database
