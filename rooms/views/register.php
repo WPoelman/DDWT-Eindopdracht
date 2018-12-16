@@ -37,6 +37,64 @@
 
                     <div class="pd-15">&nbsp;</div>
 
+                    <form action="/register/" method="post">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="inputUsername" placeholder="J.deboer" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstname">First name</label>
+                            <input type="text" class="form-control" id="firstname" placeholder="Johan" name="firstname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname">Last name</label>
+                            <input type="text" class="form-control" id="lastname" placeholder="de Boer" name="lastname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="birthdate">Date of birth</label>
+                            <input type="date" class="form-control" id="birthdate" placeholder="1990-01-01" name="birthdate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sex">Gender</label>
+                            <input type="radio" class="form-control" value="male" name="male">Male<br>
+                            <input type="radio" class="form-control" value="female" name="female">Female<br>
+                            <input type="radio" class="form-control" value="other" name="other">Other
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" class="form-control" id="email" placeholder="j.deboer@deboer.nl" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="*********" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <input type="radio" class="form-control" value="owner" name="owner">Owner<br>
+                            <input type="radio" class="form-control" value="tenant" name="tenant">Tenant
+                        </div>
+                        <div class="form-group">
+                            <label for="phonenumber">Phonenumber</label>
+                            <input type="tel" class="form-control" id="phonenumber" placeholder="0610012002" name="phonenumber" pattern="[0]{1}[6]{1}[0-9]{8}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="studies">Enter your study</label>
+                            <input type="text" class="form-control" id="studies" placeholder="Informatiekunde" name="studies">
+                        </div>
+                        <div class="form-group">
+                            <label for="profession">Enter your profession</label>
+                            <input type="text" class="form-control" id="profession" placeholder="Student-assistant" name="profession">
+                        </div>
+                        <div class="form-group">
+                            <label for="biography">Tell us something about you</label>
+                            <input type="text" class="form-control" id="biography" placeholder="Hi, my name is..." name="biography">
+                        </div>
+                        <div class="form-group">
+                            <label for="picture">Upload a profile picture</label>
+                            <input type="file" class="form-control" id="picture" name="picture">
+                        </div>
+                    </form>
+
             </div>
 
         </div>
