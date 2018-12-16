@@ -124,9 +124,112 @@ function get_navigation($template, $active_id){
 
 
 /**
+ * Add room to the database
+ * @param object $pdo db object
+ * @param array $room_info post array
+ * @param integer $username user that adds the series
+ * @return array with message feedback
+ */
+function add_room($pdo, $room_info, $username)
+{
+    /* Check if all required fields are set */
+    if (
+        empty($room_info['size']) or
+        empty($room_info['price']) or
+        empty($room_info['type']) or
+        empty($room_info['zip_code']) or
+        empty($room_info['number'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all required fields were filled in.'
+        ];
+    }
+
+    /* Check data type */
+    if (!is_numeric($room_info['size'] and $room_info['price'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the size and price fields.'
+        ];
+    }
+
+    /* niet zeker hier, hoe checken we of de room al bestaat? id wordt pas later toegevoegd.... ook de dingen die mogen
+    zoals de foto en description nog even checken
+//    /* Check if room already exists */
+//    $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
+//    $stmt->execute([$room_info['Name']]);
+//    $serie = $stmt->rowCount();
+//    if ($serie) {
+//        return [
+//            'type' => 'danger',
+//            'message' => 'This series was already added.'
+//        ];
+//    }
+
+    /* Add Room */
+    $stmt = $pdo->prepare("INSERT INTO room (owner, size, price, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $username,
+        $room_info['size'],
+        $room_info['price'],
+        $room_info['type'],
+        $room_info['zip_code'],
+        $room_info['number']
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted == 1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Room is successfully added!")
+        ];
+    } else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. The room was not added. Try it again.'
+        ];
+    }
+}
+
+/**
+ * Removes a room with a specific room_id
+ * @param object $pdo db object
+ * @param int $room_id id of the to be deleted room
+ * @param string $username username of the owner
+ * @return array
+ */
+function remove_room($pdo, $room_id, $username)
+{
+    /* Get room info */
+    $room_info = get_roominfo($pdo, $room_id);
+
+    /* Check if the user is allowed to edit the serie */
+    if ($room_info['username'] =! $username){
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You are not allowed to remove this room.'];
+    }
+
+    /* Delete room */
+    $stmt = $pdo->prepare("DELETE FROM room WHERE id = ?");
+    $stmt->execute([$room_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted == 1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Room was successfully removed")
+        ];
+    } else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. The room was not removed.'
+        ];
+    }
+}
+
+/**
  * Creats HTML alert code with information about the success or failure
- * @param bool $type True if success, False if failure
- * @param string $message Error/Success message
+ * @param bool $feedback True if success, False if failure
  * @return string
  */
 function get_error($feedback){

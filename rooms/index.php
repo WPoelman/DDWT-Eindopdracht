@@ -33,8 +33,8 @@ $router->get('/contact', function () {
     printf('<h1>Contact info page</h1>');
 });
 
-/* GET & DELETE route: Room opt-ins*/
-$router->match('GET|DELETE', '/opt-ins', function () use ($db) {
+/* GET & POST route: Room opt-ins*/
+$router->match('GET|POST', '/opt-ins', function () use ($db) {
     /* ALLEEN BESCHIKBAAR VOOR TENANTS
     hier functies die
     - bestaande info kunnen ophalen
@@ -52,11 +52,11 @@ $router->match('GET|POST', '/login', function () use ($db){
 ////        echo json_encode($feedback);
 });
 
-/* GET & POST & DELETE route: Account Overview*/
-$router->match('GET|POST|DELETE', '/account/([a-z0-9_-]+)', function ($username) use ($db) {
+/* GET & POST route: Account Overview*/
+$router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($db) {
     /* Hier json van functie die error ophaalt uit de POST route */
     printf('<h1>Account Overview page</h1>');
-    /* In de route moet een functie of variable mee die de username in de url zet */
+    /* In de route moet een variable mee die de username in de url zet */
 
     /* Hier functie die probeert in te loggen en goede feedback meegeeft naar de GET*/
 //        $feedback = log_in($db, $_POST);
@@ -89,19 +89,25 @@ $router->mount('/rooms', function () use ($router, $db) {
         printf('<h1>Single room page</h1>');
     });
 
-    /* GET & POST & DELETE route: edit room */
-    $router->match('GET|POST|DELETE', '/(\d+)/edit', function ($room_id) use ($db) {
+    /* GET & POST route: edit room */
+    $router->match('GET|POST', '/(\d+)/edit', function ($room_id) use ($db) {
         /* ALLEEN BESCHIKBAAR VOOR OWNERS
+
         hier functies die
-        - nieuwe info kunnen posten
-        - bestaande info kunnen ophalen
+        - nieuwe info kunnen posten */
+        $feedback = add_room($db, $POST, $username);
+
+
+        /*- bestaande info kunnen ophalen
         - bestaande info kunnen updaten
         - bestaande info kunnen verwijderen */
+        $feedback = remove_room($db, $room_id, $username);
+
         printf('<h1>Single room EDIT page</h1>');
     });
 });
 
-/* ERROR: route not found */
+/* ERROR route: route not found */
 $router->set404(function () {
     header('HTTP/1.1 404 Not Found');
     $feedback = [
