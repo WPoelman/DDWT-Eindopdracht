@@ -133,7 +133,7 @@ $router->mount('/rooms', function () use ($router, $db) {
 $router->set404(function () {
     header('HTTP/1.1 404 Not Found');
     $feedback = [
-       "http-code" => 401,
+       "http-code" => 404,
        "error-message" => "The route you tried to access does not exist.",
        ];
     echo json_encode($feedback);
