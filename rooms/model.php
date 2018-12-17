@@ -129,7 +129,7 @@ function get_navigation($template, $active_id){
  */
 
 function get_rooms($pdo){
-    $stmt = $pdo->prepare('SELECT * FROM rooms');
+    $stmt = $pdo->prepare('SELECT * FROM room');
     $stmt->execute();
     $rooms = $stmt->fetchAll();
     $room_exp = Array();
@@ -185,7 +185,7 @@ function get_rooms_table($rooms){
  * @return $room_id_exp
  */
 function get_room_details($pdo, $room_id){
-    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE id = ?');
+    $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
     $stmt->execute([$room_id]);
     $room_details = $stmt->fetch();
     $room_details_exp = Array();
