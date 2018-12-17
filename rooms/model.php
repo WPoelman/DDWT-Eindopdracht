@@ -149,7 +149,7 @@ function get_rooms($pdo){
  */
 
 
-function rooms_table($rooms){
+function get_rooms_table($rooms){
     $table_exp = '
         <table class = "table table-hover">
         <thead>
@@ -168,7 +168,7 @@ function rooms_table($rooms){
             <th scope="row">'.$value['size'].'</th>
             <th scope="row">'.$value['price'].'</th>
             <th scope="row"><img src="'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
-            <td><a href="/DDWT18-Eindopdracht/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-primary">Show details</a></td>
+            <td><a href="/DDWT-Eindopdracht/rooms/rooms/?room_id='.$value['id'].'" role="button" class="btn btn-primary">Show details</a></td>
         </tr>
         ';
          }
