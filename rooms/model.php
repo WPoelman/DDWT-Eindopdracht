@@ -170,9 +170,9 @@ function register_user($pdo, $form_data){
 
     /* Save user to database */
     try {
-        $stmt = $pdo->prepare('INSERT INTO user (username, password, firstname, lastname) VALUES (?, ?, ?, ?)');
-        $stmt->execute([$form_data['username'], $password, $form_data['firstname'], $form_data['lastname']]);
-        $user_id = $pdo->lastInsertId();
+        $stmt = $pdo->prepare('INSERT INTO user (username, password, firstname, lastname, birthdate, sex, email, role, phonenumber, studies, profession, biography, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$form_data['username'], $password, $form_data['firstname'], $form_data['lastname'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
+        $username = $pdo->lastInsertusername();
     } catch (PDOException $e) {
         return [
             'type' => 'danger',
@@ -182,10 +182,10 @@ function register_user($pdo, $form_data){
 
     /* Login user and redirect */
     session_start();
-    $_SESSION['user_id'] = $user_id;
+    $_SESSION['username'] = $username;
     $feedback = [
         'type' => 'success',
-        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['user_id']))
+        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
     ];
     redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
 }

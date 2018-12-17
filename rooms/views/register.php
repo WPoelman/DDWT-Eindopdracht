@@ -56,9 +56,9 @@
                         </div>
                         <div class="form-group">
                             <label for="sex">Gender</label>
-                            <input type="radio" class="form-control" value="male" name="male">Male<br>
-                            <input type="radio" class="form-control" value="female" name="female">Female<br>
-                            <input type="radio" class="form-control" value="other" name="other">Other
+                            <input type="radio" class="form-control" id="sex" value="male" name="sex">Male<br>
+                            <input type="radio" class="form-control" id="sex" value="female" name="sex">Female<br>
+                            <input type="radio" class="form-control" id="sex" value="other" name="sex">Other
                         </div>
                         <div class="form-group">
                             <label for="email">E-mail</label>
@@ -70,8 +70,8 @@
                         </div>
                         <div class="form-group">
                             <label for="role">Role</label>
-                            <input type="radio" class="form-control" value="owner" name="owner">Owner<br>
-                            <input type="radio" class="form-control" value="tenant" name="tenant">Tenant
+                            <input type="radio" class="form-control" id="role" value="owner" name="role">Owner<br>
+                            <input type="radio" class="form-control" id="role" value="tenant" name="role">Tenant
                         </div>
                         <div class="form-group">
                             <label for="phonenumber">Phonenumber</label>
