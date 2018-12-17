@@ -66,16 +66,11 @@ $router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($
 });
 
 /* GET & POST route: Register*/
-$router->match('GET|POST', '/register', function () use ($db){
+$router->match('GET|POST', '/register', function ($feedback) use ($db){
     /* GET route: Nieuw account */
-
-    /* Hier json van functie die error ophaalt uit de POST route */
-    printf('<h1>Register page</h1>');
-    /* In de route moet een functie of variable mee die de username in de url zet */
-
     /* Hier functie die probeert te registreren goede feedback meegeeft naar de GET*/
-//        $feedback = log_in($db, $_POST);
-//        echo json_encode($feedback);
+       $feedback = log_in($db, $_POST);
+       echo json_encode($feedback);
 });
 
 /* Mount for single room views */
