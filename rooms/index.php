@@ -92,15 +92,22 @@ $router->mount('/rooms', function () use ($router, $db) {
 
         hier functies die
         - nieuwe info kunnen posten */
-        $feedback = add_room($db, $POST, $username);
+        //$feedback = add_room($db, $POST, $username);
 
 
         /*- bestaande info kunnen ophalen
         - bestaande info kunnen updaten
         - bestaande info kunnen verwijderen */
-        $feedback = remove_room($db, $room_id, $username);
+        //$feedback = remove_room($db, $room_id, $username);
 
         printf('<h1>Single room EDIT page</h1>');
+    });
+
+    $router->delete('/(\d+)', function($id) use($db) {
+        $room_details = get_room_details($db, $id);
+        $username = $room_details['owner'];
+        $feedback = remove_room($db, $id, $username);
+        echo json_encode($feedback);
     });
 });
 
