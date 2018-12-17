@@ -359,8 +359,8 @@ function add_room($pdo, $room_info, $username)
     $stmt->execute([
         $room_info['zip_code'],
         $room_info['number'],
-        "Straat",
-        "Groningen"
+        $room_info['street'],
+        $room_info['city']
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted == 1) {

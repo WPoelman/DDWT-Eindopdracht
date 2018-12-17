@@ -19,7 +19,7 @@ $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 
 /* Set the default routes for the navigation bar */
-$navigation_tpl = Array(
+$nav = Array(
     0 => Array(
         'name' => 'Home',
         'url' => '/DDWT-Eindopdracht/rooms'
@@ -69,7 +69,7 @@ $router->get('/', function () {
 });
 
 /* GET route: Contact Page */
-$router->get('/contact', function () use ($navigation_tpl) {
+$router->get('/contact', function () use ($nav) {
 
     $page_title = "Contact info";
     $page_subtitle = "Contact us";
@@ -80,7 +80,7 @@ $router->get('/contact', function () use ($navigation_tpl) {
         'contact' => na('/DDWT18/rooms/contact', True)
     ]);
     //todo navigatiebar instellen
-    $navigation = get_navigation($navigation_tpl, 4);
+    $navigation = get_navigation($nav, 4);
 
     /* Choose Template */
     include use_template('main');
@@ -88,7 +88,7 @@ $router->get('/contact', function () use ($navigation_tpl) {
 });
 
 /* GET & POST route: Room opt-ins*/
-$router->match('GET|POST', '/opt-ins', function () use ($db) {
+$router->match('GET|POST', '/opt-ins', function () use ($db, $nav) {
     /* ALLEEN BESCHIKBAAR VOOR TENANTS
     hier functies die
     - bestaande info kunnen ophalen
@@ -97,7 +97,7 @@ $router->match('GET|POST', '/opt-ins', function () use ($db) {
 });
 
 /* GET & POST route: Log In */
-$router->match('GET|POST', '/login', function () use ($db){
+$router->match('GET|POST', '/login', function () use ($db, $nav){
     /* Hier json van functie die error ophaalt uit de POST route */
     printf('<h1>Log in page</h1>');
 
@@ -107,7 +107,7 @@ $router->match('GET|POST', '/login', function () use ($db){
 });
 
 /* GET & POST route: Account Overview*/
-$router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($db) {
+$router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($db, $nav) {
     /* Hier json van functie die error ophaalt uit de POST route */
     printf('<h1>Account Overview page</h1>');
     /* In de route moet een variable mee die de username in de url zet */
@@ -120,7 +120,7 @@ $router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($
 });
 
 /* GET & POST route: Register*/
-$router->match('GET|POST', '/register', function ($feedback) use ($db){
+$router->match('GET|POST', '/register', function ($feedback) use ($db, $nav){
     /* GET route: Nieuw account */
     /* Hier functie die probeert te registreren goede feedback meegeeft naar de GET*/
        $feedback = log_in($db, $_POST);
@@ -128,7 +128,7 @@ $router->match('GET|POST', '/register', function ($feedback) use ($db){
 });
 
 /* Mount for single room views */
-$router->mount('/rooms', function () use ($router, $db) {
+$router->mount('/rooms', function () use ($router, $db, $nav) {
     /* GET route: All Rooms Overview */
     $router->get('/', function () use ($db) {
         /* Hier json van functie die alle kamer info ophaalt*/
@@ -145,15 +145,28 @@ $router->mount('/rooms', function () use ($router, $db) {
     });
 
     /* GET & POST route: add room */
-    $router->match('GET|POST', '/add', function () use ($db) {
+    $router->match('GET|POST', '/add', function () use ($db, $nav) {
         /* ALLEEN BESCHIKBAAR VOOR OWNERS */
-        printf('<h1>Add room page</h1>');
-        $feedback = add_room($db, $TEST, $username);
-        echo json_encode($feedback);
+
+        /*Set page content */
+        $page_title = "Add a room";
+        $page_subtitle = "Please fill out the form";
+        $page_content = "Add your room";
+        $submit_btn = "Submit";
+        $navigation = get_navigation($nav, 7);
+        $form_action = '/DDWT-Eindopdracht/rooms/rooms/add';
+
+        /* Choose Template */
+        include use_template('add');
+
+        if (isset($_POST["Submit"])){
+            $feedback = add_room($db, $_POST, $username);
+            echo json_encode($feedback);
+        }
     });
 
     /* GET & POST route: edit room */
-    $router->match('GET|POST', '/edit/(\d+)', function ($room_id) use ($db) {
+    $router->match('GET|POST', '/edit/(\d+)', function ($room_id) use ($db, $nav) {
         /* ALLEEN BESCHIKBAAR VOOR OWNERS */
 
         /* hier functies die
@@ -169,7 +182,7 @@ $router->mount('/rooms', function () use ($router, $db) {
         printf('<h1>Single room EDIT page</h1>');
     });
 
-    $router->delete('/(\d+)', function($id) use($db) {
+    $router->delete('/(\d+)', function($id) use($db, $nav) {
         $room_details = get_room_details($db, $id);
         $username = $room_details['owner'];
         $feedback = remove_room($db, $id, $username);
