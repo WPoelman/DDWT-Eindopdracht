@@ -345,48 +345,52 @@ function add_room($pdo, $room_info, $username)
     }
 
     /* Check data type */
-    if (!is_numeric($room_info['size'] and $room_info['price'])) {
+    if (!is_numeric($room_info['size']) and !is_numeric($room_info['price'])) {
         return [
             'type' => 'danger',
             'message' => 'There was an error. You should enter a number in the size and price fields.'
         ];
     }
 
-    /* niet zeker hier, hoe checken we of de room al bestaat? id wordt pas later toegevoegd.... ook de dingen die mogen
-    zoals de foto en description nog even checken.
-//    /* Check if room already exists */
-//    $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
-//    $stmt->execute([$room_info['Name']]);
-//    $serie = $stmt->rowCount();
-//    if ($serie) {
-//        return [
-//            'type' => 'danger',
-//            'message' => 'This series was already added.'
-//        ];
-//    }
+    /* niet zeker hier, hoe checken we of de room al bestaat? id wordt pas later toegevoegd
 
-    /* Add Room */
-    $stmt = $pdo->prepare("INSERT INTO room (owner, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    /* Add to room_adress */
+    $stmt = $pdo->prepare("INSERT INTO room_address (zip_code, number, street, city) VALUES (?, ?, ?, ?)");
     $stmt->execute([
-        $username,
-        $room_info['size'],
-        $room_info['picture'],
-        $room_info['price'],
-        $room_info['description'],
-        $room_info['type'],
         $room_info['zip_code'],
-        $room_info['number']
+        $room_info['number'],
+        "Straat",
+        "Groningen"
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted == 1) {
-        return [
-            'type' => 'success',
-            'message' => sprintf("Room is successfully added!")
-        ];
-    } else {
+        $stmt2 = $pdo->prepare("INSERT INTO room (owner, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt2->execute([
+            $username,
+            $room_info['size'],
+            $room_info['picture'],
+            $room_info['price'],
+            $room_info['description'],
+            $room_info['type'],
+            $room_info['zip_code'],
+            $room_info['number']
+        ]);
+        $inserted = $stmt2->rowCount();
+        if ($inserted == 1) {
+            return [
+                'type' => 'success',
+                'message' => sprintf("Room is successfully added!")
+            ];
+        } else {
+            return [
+                'type' => 'danger',
+                'message' => 'There was an error. The room was not added to the room table. Try it again.'
+            ];
+        }
+    }else{
         return [
             'type' => 'danger',
-            'message' => 'There was an error. The room was not added. Try it again.'
+            'message' => 'There was an error. The room was not added to the address table. Try it again.'
         ];
     }
 }

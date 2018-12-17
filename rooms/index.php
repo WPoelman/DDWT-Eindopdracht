@@ -145,11 +145,10 @@ $router->mount('/rooms', function () use ($router, $db) {
     });
 
     /* GET & POST route: add room */
-    $router->match('GET|POST', '/add', function ($room_id) use ($db) {
+    $router->match('GET|POST', '/add', function () use ($db) {
         /* ALLEEN BESCHIKBAAR VOOR OWNERS */
         printf('<h1>Add room page</h1>');
-        $username = $_SESSION['owner'];
-        $feedback = add_room($db, $_POST, $username);
+        $feedback = add_room($db, $TEST, $username);
         echo json_encode($feedback);
     });
 
