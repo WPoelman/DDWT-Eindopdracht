@@ -30,7 +30,21 @@ $router->get('/', function () {
 
 /* GET route: Contact Page */
 $router->get('/contact', function () {
-    printf('<h1>Contact info page</h1>');
+
+    $page_title = "Contact info";
+    $page_subtitle = "Contact us";
+    $page_content = "To contact us, mail wessel@roomturbo.nl";
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT-Eindopdracht' => na('/DDWT-Eindopdracht/', False),
+        'rooms' => na('/DDWT18/rooms/', False),
+        'contact' => na('/DDWT18/rooms/contact', True)
+    ]);
+    //todo navigatiebar instellen
+    //$navigation = get_navigation($template, x);
+
+    /* Choose Template */
+    include use_template('contactpage');
+
 });
 
 /* GET & POST route: Room opt-ins*/
