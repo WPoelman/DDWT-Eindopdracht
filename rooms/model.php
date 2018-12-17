@@ -123,6 +123,80 @@ function get_navigation($template, $active_id){
 }
 
 /**
+ * Get rooms from database
+ * @param $pdo
+ * @return array
+ */
+
+function get_rooms($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM rooms');
+    $stmt->execute();
+    $rooms = $stmt->fetchAll();
+    $room_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($rooms as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $room_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $room_exp;
+}
+
+/** Make room overview table
+ * @param $rooms
+ * @return $table_exp
+ */
+
+
+function rooms_table($rooms){
+    $table_exp = '
+        <table class = "table table-hover">
+        <thead>
+        <tr>
+            <th scope="col" class="col-sm-8"> Title </th>
+            <th scope="col" class="col-sm-1"> Size </th>
+            <th scope="col" class="col-sm-1"> Price </th>
+            <th scope="col" class="col-sm-2"> Photo </th>
+        </tr>
+        </thead>
+        <tbody>';
+         foreach($rooms as $key => $value){
+             $table_exp .= '
+        <tr>
+            <th scope="row">'.$value['type'].$value['street'].$value['city'].'</th>
+            <th scope="row">'.$value['size'].'</th>
+            <th scope="row">'.$value['price'].'</th>
+            <th scope="row"><img src="'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
+            <td><a href="/DDWT18-Eindopdracht/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-primary">Show details</a></td>
+        </tr>
+        ';
+         }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+}
+/**
+ * Generates an array with room details
+ * @param $pdo
+ * @param $room_id
+ * @return $room_id_exp
+ */
+function get_room_details($pdo, $room_id){
+    $stmt = $pdo->prepare('SELECT * FROM rooms WHERE id = ?');
+    $stmt->execute([$room_id]);
+    $room_details = $stmt->fetch();
+    $room_details_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($room_details as $key => $value){
+        $room_details_exp[$key] = htmlspecialchars($value);
+    }
+    return $room_details_exp;
+}
+/**
  * Register new users and assign the values to database
  * @param $pdo
  * @param $form_data
@@ -279,7 +353,7 @@ function add_room($pdo, $room_info, $username)
     }
 
     /* niet zeker hier, hoe checken we of de room al bestaat? id wordt pas later toegevoegd.... ook de dingen die mogen
-    zoals de foto en description nog even checken
+    zoals de foto en description nog even checken.
 //    /* Check if room already exists */
 //    $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
 //    $stmt->execute([$room_info['Name']]);
