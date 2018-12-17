@@ -88,9 +88,13 @@ $router->mount('/rooms', function () use ($router, $db) {
 
     /* GET & POST route: edit room */
     $router->match('GET|POST', '/(\d+)/edit', function ($room_id) use ($db) {
-        /* ALLEEN BESCHIKBAAR VOOR OWNERS
+        /* ALLEEN BESCHIKBAAR VOOR OWNERS */
 
-        hier functies die
+        $username = $_SESSION['owner'];
+        $feedback = add_room($db, $_POST, $username);
+        echo json_encode($feedback);
+
+        /* hier functies die
         - nieuwe info kunnen posten */
         //$feedback = add_room($db, $POST, $username);
 

@@ -366,11 +366,13 @@ function add_room($pdo, $room_info, $username)
 //    }
 
     /* Add Room */
-    $stmt = $pdo->prepare("INSERT INTO room (owner, size, price, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO room (owner, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $username,
         $room_info['size'],
+        $room_info['picture'],
         $room_info['price'],
+        $room_info['description'],
         $room_info['type'],
         $room_info['zip_code'],
         $room_info['number']
