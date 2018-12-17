@@ -133,11 +133,15 @@ $router->mount('/rooms', function () use ($router, $db) {
     $router->get('/', function () use ($db) {
         /* Hier json van functie die alle kamer info ophaalt*/
         printf('<h1>ALL Rooms overview page</h1>');
+        $feedback = get_rooms($db);
+        echo json_encode($feedback);
     });
 
     /* GET route: view single room */
     $router->get('/(\d+)', function ($room_id) use ($db) {
         printf('<h1>Single room page</h1>');
+        $feedback = get_room_details($db, $room_id);
+        echo json_encode($feedback);
     });
 
     /* GET & POST route: add room */
