@@ -263,14 +263,6 @@ function register_user($pdo, $form_data){
         ];
     }
 
-    /* Login user and redirect */
-    session_start();
-    $_SESSION['username'] = $username;
-    $feedback = [
-        'type' => 'success',
-        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
-    ];
-    redirect(sprintf('/register/?error_msg=%s', json_encode($feedback)));
 }
 
 /**

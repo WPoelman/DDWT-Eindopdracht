@@ -38,7 +38,7 @@ $nav = Array(
     ),
     5 => Array(
         'name' => 'Register',
-        'url' => 'DDWT-Eindopdracht/rooms/register'
+        'url' => '/DDWT-Eindopdracht/rooms/register'
     ),
     6 => Array(
         'name' => 'Overview',
@@ -109,15 +109,24 @@ $router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($
 });
 
 /* GET & POST route: Register*/
-$router->match('GET|POST', '/register', function () use ($db, $nav){
+$router->match('GET|POST', '/register', function () use ($db, $nav) {
 
+    /*Set page content */
+    $page_title = "Register";
+    $page_subtitle = "Please fill out the form";
+    $page_content = "Register your account";
+    $submit_btn = "Submit";
     $navigation = get_navigation($nav, 5);
+    $form_action = '/DDWT-Eindopdracht/rooms/register';
 
-    /* GET route: Nieuw account */
-    /* Hier functie die probeert te registreren goede feedback meegeeft naar de GET*/
+    /* Choose Template */
+    include use_template('register');
 
+    if (isset($_POST["Submit"])) {
+        $feedback = register_user($db, $_POST);
+        echo json_encode($feedback);
+    }
 
-       include use_template('register');
 });
 
 /* Mount for single room views */
