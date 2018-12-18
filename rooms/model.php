@@ -191,16 +191,16 @@ function get_rooms_table($rooms){
 function get_room_details($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
     $stmt->execute([$room_id]);
-    $room_details = $stmt->fetch();
+    $room_details = $stmt->fetchAll();
 
 
-    $stmt2 = $pdo->prepare('SELECT street, city FROM room_address WHERE zip_code = ?, number = ?');
+    $stmt2 = $pdo->prepare('SELECT * FROM room_address WHERE zip_code = ? and number = ?');
     $stmt2->execute([$room_details['zip_code'],$room_details['number']]);
     $room_details+=($stmt2->fetchAll());
     $room_details_exp = Array();
 
     /* Create array with htmlspecialchars */
-    foreach ($room_details as $key => $value){
+    foreach ($room_details as $key => $value){1
         $room_details_exp[$key] = htmlspecialchars($value);
     }
     return $room_details_exp;
