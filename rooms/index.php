@@ -16,7 +16,8 @@ include 'model.php';
 $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 /* Credentials */
-
+$room_id = $_GET['room_id'];
+$room_info = get_room_details($db, $room_id);
 
 /* Set the default routes for the navigation bar */
 $nav = Array(
@@ -130,20 +131,36 @@ $router->match('GET|POST', '/register', function () use ($db, $nav) {
 });
 
 /* Mount for single room views */
-$router->mount('/rooms', function () use ($router, $db, $nav) {
+$router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
     /* GET route: All Rooms Overview */
     $router->get('/', function () use ($db) {
-        /* Hier json van functie die alle kamer info ophaalt*/
-        printf('<h1>ALL Rooms overview page</h1>');
-        $feedback = get_rooms($db);
-        echo json_encode($feedback);
+        $page_title = "Rooms overview";
+        $page_subtitle = "Overview of all the rooms";
+        $page_content = get_rooms_table(get_rooms($db));
+
+        include use_template('main');
     });
 
     /* GET route: view single room */
-    $router->get('/(\d+)', function ($room_id) use ($db) {
-        printf('<h1>Single room page</h1>');
-        $feedback = get_room_details($db, $room_id);
-        echo json_encode($feedback);
+    $router->get('/(\d+)', function ($room_id) use ($db, $room_info, $nav) {
+        /* Page info */
+
+        $page_title = sprintf("Information about %s", $room_info['type'], $room_info['street'], $room_info['city']);
+        $navigation = get_navigation($nav, 6);
+
+        /* Page content */
+        $type = $room_info['type'];
+        $owner = $room_info['owner'];
+        $street = $room_info['street'];
+        $city = $room_info['city'];
+        $picture = $room_info['picture'];
+        $size = $room_info['size'];
+        $price = $room_info['price'];
+
+
+        /* Choose Template */
+
+        include use_template('room');
     });
 
     /* GET & POST route: add room */
