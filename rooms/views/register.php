@@ -93,7 +93,7 @@
                             <label for="picture">Upload a profile picture</label>
                             <input type="file" class="form-control" id="picture" name="picture">
                         </div>
-                        <button type="submit" name="register" class="btn btn-primary">Register</button>
+                        <button type="submit" name="Submit" class="btn btn-primary">Register</button>
                     </form>
 
             </div>

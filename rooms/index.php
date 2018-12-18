@@ -120,11 +120,15 @@ $router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($
 });
 
 /* GET & POST route: Register*/
-$router->match('GET|POST', '/register', function ($feedback) use ($db, $nav){
+$router->match('GET|POST', '/register', function () use ($db, $nav){
+
+    $navigation = get_navigation($nav, 5);
+
     /* GET route: Nieuw account */
     /* Hier functie die probeert te registreren goede feedback meegeeft naar de GET*/
-       $feedback = log_in($db, $_POST);
-       echo json_encode($feedback);
+
+
+       include use_template('register');
 });
 
 /* Mount for single room views */
