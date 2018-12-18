@@ -20,7 +20,7 @@
         <?= $navigation ?>
 
         <!-- content -->
-        <div class="containter">
+        <div class="container">
             <!-- breadcrumps -->
             <div class="pd-15">&nbsp</div>
             <?= $breadcrumbs ?>

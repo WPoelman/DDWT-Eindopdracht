@@ -130,9 +130,13 @@ function get_navigation($template, $active_id){
 
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM room');
+    $stmt2 = $pdo->prepare('SELECT (street, city) from room_address');
     $stmt->execute();
+    $stmt2->execute();
     $rooms = $stmt->fetchAll();
+    $rooms->append($stmt2->fetchAll());
     $room_exp = Array();
+
 
     /* Create array with htmlspecialchars */
     foreach ($rooms as $key => $value){
@@ -188,7 +192,15 @@ function get_room_details($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
     $stmt->execute([$room_id]);
     $room_details = $stmt->fetch();
+
+
+    $stmt2 = $pdo->prepare('SELECT (street, city) from room_address WHERE zip_code = ?, number = ?');
+    $stmt2->excecute([$room_details['zip_code'],$room_details['number']]);
+    $room_details->append($stmt2->fetchAll());
     $room_details_exp = Array();
+
+
+
 
     /* Create array with htmlspecialchars */
     foreach ($room_details as $key => $value){
