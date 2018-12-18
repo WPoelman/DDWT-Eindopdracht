@@ -37,7 +37,7 @@
                 <tbody>
                 <tr>
                     <th scope="row">Title</th>
-                    <td><?= $type ?> <?= $street ?> <?= $city ?></td>
+                    <td><?= $title ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Picture</th>

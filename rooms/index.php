@@ -145,10 +145,11 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
     $router->get('/(\d+)', function ($room_id) use ($db, $room_info, $nav) {
         /* Page info */
 
-        $page_title = sprintf("Information about %s", $room_info['type'], $room_info['street'], $room_info['city']);
+        $page_title = sprintf("Information about %s", $room_info['title']);
         $navigation = get_navigation($nav, 6);
 
         /* Page content */
+        $title = $room_info['title'];
         $type = $room_info['type'];
         $owner = $room_info['owner'];
         $street = $room_info['street'];

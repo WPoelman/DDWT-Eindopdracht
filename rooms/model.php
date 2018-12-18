@@ -168,7 +168,7 @@ function get_rooms_table($rooms){
          foreach($rooms as $key => $value){
              $table_exp .= '
         <tr>
-            <th scope="row">'.$value['type'].$value['street'].$value['city'].'</th>
+            <th scope="row">'.$value['title'].'</th>
             <th scope="row">'.$value['size'].'</th>
             <th scope="row">'.$value['price'].'</th>
             <th scope="row"><img src="'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>

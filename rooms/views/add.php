@@ -35,6 +35,12 @@
                     <p><?= $page_content ?></p>
                     <form action="<?= $form_action ?>" method="POST">
                         <div class="form-group row">
+                            <label for="inputSize" class="col-sm-2 col-form-label">Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputTitle" name="title" value="<?php if (isset($room_info)){echo $room_info['size'];} ?>" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label for="inputSize" class="col-sm-2 col-form-label">Size</label>
                             <div class="col-sm-10">
                                 <input type="number" class="form-control" id="inputSize" name="size" value="<?php if (isset($room_info)){echo $room_info['size'];} ?>" required>
