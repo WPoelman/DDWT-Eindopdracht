@@ -32,10 +32,6 @@ $nav = Array(
         'name' => 'My Account',
         'url' => '/DDWT-Eindopdracht/rooms/account'
     ),
-    3 => Array(
-        'name' => 'Opt-ins',
-        'url' => '/DDWT-Eindopdracht/rooms/opt-ins'
-    ),
     4 => Array(
         'name' => 'Contact',
         'url' => '/DDWT-Eindopdracht/rooms/contact'
@@ -88,13 +84,6 @@ $router->get('/contact', function () use ($nav) {
 });
 
 /* GET & POST route: Room opt-ins*/
-$router->match('GET|POST', '/opt-ins', function () use ($db, $nav) {
-    /* ALLEEN BESCHIKBAAR VOOR TENANTS
-    hier functies die
-    - bestaande info kunnen ophalen
-    - bestaande info kunnen verwijderen */
-    printf('<h1>Opt-in overview page</h1>');
-});
 
 /* GET & POST route: Log In */
 $router->match('GET|POST', '/login', function () use ($db, $nav){
