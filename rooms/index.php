@@ -84,24 +84,19 @@ $router->get('/contact', function () use ($nav) {
 
 /* GET & POST route: Log In */
 $router->match('GET|POST', '/login', function () use ($db, $nav){
-    /* Hier json van functie die error ophaalt uit de POST route */
     printf('<h1>Log in page</h1>');
 
     /* Hier functie die probeert in te loggen en goede feedback meegeeft naar de GET*/
-////        $feedback = log_in($db, $_POST);
-////        echo json_encode($feedback);
+
 });
 
 /* GET & POST route: Account Overview*/
 $router->match('GET|POST', '/account/([a-z0-9_-]+)', function ($username) use ($db, $nav) {
-    /* Hier json van functie die error ophaalt uit de POST route */
     printf('<h1>Account Overview page</h1>');
-    /* In de route moet een variable mee die de username in de url zet */
 
-    /* Hier functie die probeert in te loggen en goede feedback meegeeft naar de GET*/
-//        $feedback = log_in($db, $_POST);
-//        echo json_encode($feedback);
-    /* functie die de bestaande info ophaalt en laat updaten -> update_series() :) */
+    /* todo functie die probeert in te loggen en goede feedback meegeeft naar de GET*/
+
+    /* todo functie die de bestaande info ophaalt en laat updaten -> update_series() :) */
 
 });
 
@@ -139,8 +134,8 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
 
     /* GET route: view single room */
     $router->get('/(\d+)', function ($room_id) use ($db, $room_info, $nav) {
-        /* Page info */
 
+        /* Page info */
         $page_title = sprintf("Information about %s", $room_info['title']);
         $navigation = get_navigation($nav, 5);
 
@@ -183,17 +178,8 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
 
     /* GET & POST route: edit room */
     $router->match('GET|POST', '/edit/(\d+)', function ($room_id) use ($db, $nav) {
-        /* ALLEEN BESCHIKBAAR VOOR OWNERS */
 
-        /* hier functies die
-        - nieuwe info kunnen posten */
-        //$feedback = edit_room($db, $POST, $username);
-
-
-        /*- bestaande info kunnen ophalen
-        - bestaande info kunnen updaten
-        - bestaande info kunnen verwijderen */
-        //$feedback = remove_room($db, $room_id, $username);
+        // todo $feedback = edit_room($db, $POST, $username);
 
         printf('<h1>Single room EDIT page</h1>');
     });
@@ -202,7 +188,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
         $room_details = get_room_details($db, $id);
         $username = $room_details['owner'];
         $feedback = remove_room($db, $id, $username);
-        echo json_encode($feedback);
+        // todo get error echo json_encode($feedback);
     });
 });
 
@@ -213,7 +199,7 @@ $router->set404(function () {
        "http-code" => 404,
        "error-message" => "The route you tried to access does not exist.",
        ];
-    echo json_encode($feedback);
+    /// todo get error echo json_encode($feedback);
 });
 
 /* Run the router */
