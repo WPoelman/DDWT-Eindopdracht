@@ -16,7 +16,8 @@ include 'model.php';
 $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 /* Credentials */
-$room_id = $_GET['room_id'];
+// TODO: Room id veranderen
+$room_id = 1;
 $room_info = get_room_details($db, $room_id);
 
 /* Set the default routes for the navigation bar */
@@ -71,11 +72,7 @@ $router->get('/contact', function () use ($nav) {
     $page_title = "Contact info";
     $page_subtitle = "Contact us";
     $page_content = "To contact us, mail wessel@roomturbo.nl";
-    $breadcrumbs = get_breadcrumbs([
-        'DDWT-Eindopdracht' => na('/DDWT-Eindopdracht/', False),
-        'rooms' => na('/DDWT18/rooms/', False),
-        'contact' => na('/DDWT18/rooms/contact', True)
-    ]);
+
     $navigation = get_navigation($nav, 3);
 
     /* Choose Template */
@@ -221,62 +218,3 @@ $router->set404(function () {
 
 /* Run the router */
 $router->run();
-//
-//include 'model.php';
-//
-///* Connect to DB */
-//$db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
-//
-//$template = Array(
-//    1 => Array('name' => 'Home','url' => '/DDWT-Eindopdracht/rooms/'),
-//    2 => Array('name' => 'Overview','url' => '/DDWT-Eindopdracht/rooms/overview/')
-//);
-//
-///* Landing page */
-//if (new_route('/DDWT-Eindopdracht/rooms/', 'get')) {
-//    /* Page info */
-//    $page_title = 'Home';
-//    $breadcrumbs = get_breadcrumbs([
-//        'Home' => na('/DDWT-Eindopdracht/rooms/', True)
-//    ]);
-//    $active_id = 0;
-//    $navigation = get_navigation($template, $active_id);
-//
-//    /* Page content */
-//    $page_subtitle = 'Subtitle Home-page';
-//    $page_content = 'Content';
-//
-//    /* Choose Template */
-//    include use_template('main');
-//}
-//
-///* Overview*/
-//elseif (new_route('/DDWT-Eindopdracht/rooms/overview/', 'get')) {
-//    /* Page info */
-//    $page_title = 'Overview';
-//    $breadcrumbs = get_breadcrumbs([
-//        'Home' => na('/DDWT-Eindopdracht/rooms/', True),
-//        'Overview' => na('/DDWT-Eindopdracht/rooms/overview/', True)
-//    ]);
-//    $active_id = 1;
-//    $navigation = get_navigation($template, $active_id);
-//
-//    /* Page content */
-//    $page_subtitle = 'Subtitle Overview';
-//    $page_content = 'Content Overview';
-//
-//    /* Choose Template */
-//    include use_template('main');
-//}
-/* Check if the user has the right credentials */
-//$router->before('GET|POST|PUT|DELETE', '/api/.*', function () use ($cred) {
-//    if (!check_cred($cred)) {
-//        $feedback = [
-//            'type' => 'danger',
-//            'message' => 'Authentication failed. Please check the credentials.'
-//        ];
-//        echo json_encode($feedback);
-//        exit();
-//    }
-//});
-

@@ -35,31 +35,6 @@ function connect_db($host, $db, $user, $pass){
 }
 
 /**
- * Check if the route exist
- * @param string $route_uri URI to be matched
- * @param string $request_type request method
- * @return bool
- *
- */
-function new_route($route_uri, $request_type){
-    $route_uri_expl = array_filter(explode('/', $route_uri));
-    $current_path_expl = array_filter(explode('/',parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-    if ($route_uri_expl == $current_path_expl && $_SERVER['REQUEST_METHOD'] == strtoupper($request_type)) {
-        return True;
-    }
-}
-
-/**
- * Creates a new navigation array item using url and active status
- * @param string $url The url of the navigation item
- * @param bool $active Set the navigation item to active or inactive
- * @return array
- */
-function na($url, $active){
-    return [$url, $active];
-}
-
-/**
  * Creates filename to the template
  * @param string $template filename of the template without extension
  * @return string
@@ -69,25 +44,6 @@ function use_template($template){
     return $template_doc;
 }
 
-/**
- * Creates breadcrumb HTML code using given array
- * @param array $breadcrumbs Array with as Key the page name and as Value the corresponding url
- * @return string html code that represents the breadcrumbs
- */
-function get_breadcrumbs($breadcrumbs) {
-    $breadcrumbs_exp = '<nav aria-label="breadcrumb">';
-    $breadcrumbs_exp .= '<ol class="breadcrumb" >';
-    foreach ($breadcrumbs as $name => $info) {
-        if ($info[1]){
-            $breadcrumbs_exp .= '<li class="breadcrumb-item active " aria-current="page">'.$name.'</li>';
-        }else{
-            $breadcrumbs_exp .= '<li class="breadcrumb-item"><a href="'.$info[0].'">'.$name.'</a></li>';
-        }
-    }
-    $breadcrumbs_exp .= '</ol>';
-    $breadcrumbs_exp .= '</nav>';
-    return $breadcrumbs_exp;
-}
 
 /**
  * Creates navigation HTML code using given array
@@ -130,21 +86,22 @@ function get_navigation($template, $active_id){
 
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM room');
-    $stmt2 = $pdo->prepare('SELECT street, city from room_address');
     $stmt->execute();
+    $room_info = $stmt->fetchAll();
+
+    $stmt2 = $pdo->prepare('SELECT * FROM room_address ');
     $stmt2->execute();
-    $rooms = $stmt->fetchAll();
-    $rooms+=($stmt2->fetchAll());
-    $room_exp = Array();
+    $room_info += ($stmt2->fetchAll());
+    $room_info_exp = Array();
 
 
     /* Create array with htmlspecialchars */
-    foreach ($rooms as $key => $value){
-        foreach ($value as $user_key => $user_input) {
-            $room_exp[$key][$user_key] = htmlspecialchars($user_input);
+    foreach ($room_info as $key => $room_array){
+        foreach ($room_array as $room_key => $value) {
+            $room_info_exp[$key][$room_key] = htmlspecialchars($value);
         }
     }
-    return $room_exp;
+    return $room_info_exp;
 }
 
 /** Make room overview table
@@ -191,19 +148,18 @@ function get_rooms_table($rooms){
 function get_room_details($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
     $stmt->execute([$room_id]);
-    $room_details = $stmt->fetchAll();
+    $room_info = $stmt->fetch();
 
-
-    $stmt2 = $pdo->prepare('SELECT * FROM room_address WHERE zip_code = ? and number = ?');
-    $stmt2->execute([$room_details['zip_code'],$room_details['number']]);
-    $room_details+=($stmt2->fetchAll());
-    $room_details_exp = Array();
+    $stmt2 = $pdo->prepare('SELECT * FROM room_address WHERE zip_code = ? AND number = ? ');
+    $stmt2->execute([$room_info['zip_code'], $room_info['number']]);
+    $room_info += ($stmt2->fetch());
+    $room_info_exp = Array();
 
     /* Create array with htmlspecialchars */
-    foreach ($room_details as $key => $value){1
-        $room_details_exp[$key] = htmlspecialchars($value);
+    foreach ($room_info as $key => $value){
+        $room_info_exp[$key] = htmlspecialchars($value);
     }
-    return $room_details_exp;
+    return $room_info_exp;
 }
 /**
  * Register new users and assign the values to database
