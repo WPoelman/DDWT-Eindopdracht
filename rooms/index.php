@@ -33,23 +33,23 @@ $nav = Array(
         'name' => 'My Account',
         'url' => '/DDWT-Eindopdracht/rooms/account'
     ),
-    4 => Array(
+    3 => Array(
         'name' => 'Contact',
         'url' => '/DDWT-Eindopdracht/rooms/contact'
     ),
-    5 => Array(
+    4 => Array(
         'name' => 'Register',
         'url' => '/DDWT-Eindopdracht/rooms/register'
     ),
-    6 => Array(
+    5 => Array(
         'name' => 'Overview',
         'url' => '/DDWT-Eindopdracht/rooms/rooms'
     ),
-    7 => Array(
+    6 => Array(
         'name' => 'Add',
         'url' => '/DDWT-Eindopdracht/rooms/rooms/add'
     ),
-    8 => Array(
+    7 => Array(
         'name' => 'Edit',
         'url' => '/DDWT-Eindopdracht/rooms/rooms/edit'
     ),
@@ -76,8 +76,7 @@ $router->get('/contact', function () use ($nav) {
         'rooms' => na('/DDWT18/rooms/', False),
         'contact' => na('/DDWT18/rooms/contact', True)
     ]);
-    //todo navigatiebar instellen
-    $navigation = get_navigation($nav, 4);
+    $navigation = get_navigation($nav, 3);
 
     /* Choose Template */
     include use_template('main');
@@ -117,7 +116,7 @@ $router->match('GET|POST', '/register', function () use ($db, $nav) {
     $page_subtitle = "Please fill out the form";
     $page_content = "Register your account";
     $submit_btn = "Submit";
-    $navigation = get_navigation($nav, 5);
+    $navigation = get_navigation($nav, 4);
     $form_action = '/DDWT-Eindopdracht/rooms/register';
 
     /* Choose Template */
@@ -146,7 +145,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
         /* Page info */
 
         $page_title = sprintf("Information about %s", $room_info['title']);
-        $navigation = get_navigation($nav, 6);
+        $navigation = get_navigation($nav, 5);
 
         /* Page content */
         $title = $room_info['title'];
@@ -173,7 +172,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info) {
         $page_subtitle = "Please fill out the form";
         $page_content = "Add your room";
         $submit_btn = "Submit";
-        $navigation = get_navigation($nav, 7);
+        $navigation = get_navigation($nav, 6);
         $form_action = '/DDWT-Eindopdracht/rooms/rooms/add';
 
         /* Choose Template */
@@ -240,7 +239,7 @@ $router->run();
 //    $breadcrumbs = get_breadcrumbs([
 //        'Home' => na('/DDWT-Eindopdracht/rooms/', True)
 //    ]);
-//    $active_id = 1;
+//    $active_id = 0;
 //    $navigation = get_navigation($template, $active_id);
 //
 //    /* Page content */
@@ -259,7 +258,7 @@ $router->run();
 //        'Home' => na('/DDWT-Eindopdracht/rooms/', True),
 //        'Overview' => na('/DDWT-Eindopdracht/rooms/overview/', True)
 //    ]);
-//    $active_id = 2;
+//    $active_id = 1;
 //    $navigation = get_navigation($template, $active_id);
 //
 //    /* Page content */
