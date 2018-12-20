@@ -203,13 +203,14 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $usern
         $navigation = get_navigation($nav, 6);
         $form_action = '/DDWT-Eindopdracht/rooms/rooms/add';
 
-        /* Choose Template */
-        include use_template('add');
+
 
         if (isset($_POST["Submit"])){
             $feedback = add_room($db, $_POST, $username);
             $error_msg = get_error($feedback);
         }
+        /* Choose Template */
+        include use_template('add');
     });
 
     /* GET & POST route: edit room */

@@ -289,6 +289,7 @@ function add_room($pdo, $room_info, $username)
 {
     /* Check if all required fields are set */
     if (
+        empty($room_info['title']) or
         empty($room_info['size']) or
         empty($room_info['price']) or
         empty($room_info['type']) or
@@ -321,9 +322,10 @@ function add_room($pdo, $room_info, $username)
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted == 1) {
-        $stmt2 = $pdo->prepare("INSERT INTO room (owner, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt2 = $pdo->prepare("INSERT INTO room (owner, title, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt2->execute([
             $username,
+            $room_info['title'],
             $room_info['size'],
             $room_info['picture'],
             $room_info['price'],

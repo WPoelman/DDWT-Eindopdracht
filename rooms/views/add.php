@@ -10,7 +10,7 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
     <!-- Own CSS -->
-    <link rel="stylesheet" href="/DDWT18/week2/css/main.css">
+    <link rel="stylesheet" href="rooms/css/main.css">
 
     <title><?= $page_title ?></title>
 </head>
@@ -34,82 +34,55 @@
             <p><?= $page_content ?></p>
             <form action="<?= $form_action ?>" method="POST">
                 <div class="form-group row">
-                    <label for="inputSize" class="col-sm-2 col-form-label">Title</label>
+                    <label for="inputSize" class="col-sm-2 col-form-label">Listing Title</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="inputTitle" name="title"
                                value="<?php if (isset($room_info)) {
-                                   echo $room_info['size'];
+                                   echo $room_info['title'];
                                } ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputSize" class="col-sm-2 col-form-label">Size</label>
-                    <div class="col-sm-10">
+                    <label for="inputSize" class="col-sm-2 col-form-label">Room size</label>
+                    <div class="col-sm-4">
                         <input type="number" class="form-control" id="inputSize" name="size"
                                value="<?php if (isset($room_info)) {
                                    echo $room_info['size'];
                                } ?>" required>
                     </div>
+                        <label for="inputPrice" class="col-sm-3 col-form-label">Price per month</label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="inputPrice" name="price"
+                                   value="<?php if (isset($room_info)) {
+                                       echo $room_info['price'];
+                                   } ?>">
+                        </div>
                 </div>
                 <div class="form-group row">
-                    <label for="inputPicture" class="col-sm-2 col-form-label">Add a picture</label>
-                    <div class="col-sm-10">
-                        <input type="file" class="form-control" id="inputPicture" name="picture">
+                    <label for="inputType" class="col-sm-2">Type</label>
+                    <div class="col-sm-6">
+                    <select class="custom-select">
+                        <option selected>Select a room type</option>
+                        <option value="room">Room</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="room_in">Room in house</option>
+                        <option value="studio">Studio</option>
+                        <option value="house_boat">House boat</option>
+                    </select>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label for="inputPrice" class="col-sm-2 col-form-label">Price per month (including
-                        utilities)</label>
-                    <div class="col-sm-10">
-                        <input type="number" class="form-control" id="inputPrice" name="price"
-                               value="<?php if (isset($room_info)) {
-                                   echo $room_info['price'];
-                               } ?>">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="inputDescription" class="col-sm-2 col-form-label">Description</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="inputDescription"
-                                  name="description"><?php if (isset($room_info)) {
-                                echo $room_info['description'];
-                            } ?></textarea>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="inputType" class="radio-inline">Type</label>
-                    <div class="form-group-inline">
-                        <input type="radio" class="form-control" id="inputType" name="type">Room<br>
-                        <input type="radio" class="form-control" id="inputType" name="type"
-                               value="<?php if (isset($room_info)) {
-                                   echo $room_info['type'];
-                               } ?>">Apartment<br>
-                        <input type="radio" class="form-control" id="inputType" name="type"
-                               value="<?php if (isset($room_info)) {
-                                   echo $room_info['type'];
-                               } ?>">Room_in<br>
-                        <input type="radio" class="form-control" id="inputType" name="type"
-                               value="<?php if (isset($room_info)) {
-                                   echo $room_info['type'];
-                               } ?>">Studio<br>
-                        <input type="radio" class="form-control" id="inputType" name="type"
-                               value="<?php if (isset($room_info)) {
-                                   echo $room_info['type'];
-                               } ?>">Houseboat<br>
-                    </div>
-                </div>
+
+
                 <div class="form-group row">
                     <label for="inputZip_code" class="col-sm-2 col-form-label">Zip code</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-5">
                         <input type="text" class="form-control" id="inputZip_code" name="zip_code"
                                value="<?php if (isset($room_info)) {
                                    echo $room_info['zip_code'];
                                } ?>">
                     </div>
-                </div>
-                <div class="form-group row">
                     <label for="inputNumber" class="col-sm-2 col-form-label">Number</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-3">
                         <input type="number" class="form-control" id="inputNumber" name="number"
                                value="<?php if (isset($room_info)) {
                                    echo $room_info['number'];
@@ -134,11 +107,26 @@
                                } ?>">
                     </div>
                 </div>
+                    <div class="form-group row">
+                        <label for="inputDescription" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                        <textarea class="form-control" id="inputDescription"
+                                  name="description"><?php if (isset($room_info)) {
+                                echo $room_info['description'];
+                            } ?></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                    <label for="inputPicture" class="col-sm-2 col-form-label">Add a picture</label>
+                    <div class="col-sm-10">
+                        <input type="file" id="inputPicture" name="picture">
+                    </div>
+                    </div>
                 <?php if (isset($room_id)) { ?><input type="hidden" name="room_id"
                                                       value="<?php echo $room_id ?>"><?php } ?>
                 <div class="form-group row">
                     <div class="col-sm-10">
-                        <button type="submit" name="Submit" class="btn btn-primary"><?= $submit_btn ?></button>
+                        <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>
                     </div>
                 </div>
             </form>
