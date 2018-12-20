@@ -56,14 +56,19 @@ $nav = Array(
         'url' => '/DDWT-Eindopdracht/rooms/rooms/edit'
     ),
 );
+
 /* Create Router instance */
 $router = new \Bramus\Router\Router();
 
-/* Routes */
+//* ROUTES *//
 
 /* GET route: Landing Page */
 $router->get('/', function () use ($nav) {
-    /* todo Hier functie die eventuele error ophaalt uit de POST route */
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
     /*Set page content */
     $page_title = "Homepage";
     $page_subtitle = "RoomTurbo: Not related to new kids.";
@@ -76,22 +81,22 @@ $router->get('/', function () use ($nav) {
 
 /* GET route: Contact Page */
 $router->get('/contact', function () use ($nav) {
-
+    /*Set page content */
     $page_title = "Contact info";
     $page_subtitle = "Contact us";
     $page_content = "To contact us, mail wessel@roomturbo.nl";
-
     $navigation = get_navigation($nav, 3);
 
     /* Choose Template */
     include use_template('main');
-
 });
 
-/* GET & POST route: Log In */
-$router->match('GET|POST', '/login', function () use ($db, $nav){
-
-    /* todo Hier functie die probeert in te loggen en goede feedback meegeeft naar de GET*/
+/* GET route: Log In */
+$router->get('/login', function () use ($db, $nav){
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
 
     /*Set page content */
     $page_title = "Log In";
@@ -103,20 +108,27 @@ $router->match('GET|POST', '/login', function () use ($db, $nav){
 
     /* Choose Template */
     include use_template('login');
-
-    if (isset($_POST["Submit"])) {
-        $feedback = login_user($db, $_POST);
-        $error_msg = get_error($feedback);
-    }
-
 });
 
-/* GET & POST route: Account Overview*/
-$router->match('GET|POST', '/account', function () use ($db, $nav, $username) {
+/* POST route: Log In */
+$router->post('/login', function () use ($db){
+    /* Try to login */
+    /* todo Hier functie die probeert in te loggen */
+    $feedback = login_user($db, $_POST);
 
-    /* todo functie die probeert in te loggen en goede feedback meegeeft naar de GET*/
+    /* Redirect to log in GET route */
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+            json_encode($feedback)));
+});
 
-    /* todo functie die de bestaande info ophaalt en laat updaten -> update_series() :) */
+/* GET route: Account Overview*/
+$router->get('/account', function () use ($db, $nav, $username) {
+
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+    /* todo functie die de bestaande info ophaalt */
 
     /*Set page content */
     $page_title = "Account Overview. Hallo $username !";
@@ -128,16 +140,25 @@ $router->match('GET|POST', '/account', function () use ($db, $nav, $username) {
 
     /* Choose Template */
     include use_template('account');
-
-//    if (isset($_POST["Submit"])) {
-//        $feedback = edit_user($db, $_POST);
-//        $error_msg = get_error($feedback);
-//    }
 });
 
-/* GET & POST route: Register*/
-$router->match('GET|POST', '/register', function () use ($db, $nav) {
+/* POST route: Edit Account */
+$router->post('/account', function () use ($db, $username) {
+    /* Try to edit account */
+    /* todo Hier functie die probeert account info ophaalt en laat updaten -> update_series() :) */
+    $feedback = edit_user($db, $_POST, $username);
 
+    /* Redirect to account GET route */
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s',
+        json_encode($feedback)));
+});
+
+/* GET route: Register */
+$router->get('/register', function () use ($db, $nav) {
+    /* Get error msg from POST route */
+    if (isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
     /*Set page content */
     $page_title = "Register";
     $page_subtitle = "Please fill out the form";
@@ -148,27 +169,37 @@ $router->match('GET|POST', '/register', function () use ($db, $nav) {
 
     /* Choose Template */
     include use_template('register');
-
-    if (isset($_POST["Submit"])) {
-        $feedback = register_user($db, $_POST);
-        $error_msg = get_error($feedback);
-    }
-
 });
 
-/* Mount for single room views */
+/* POST route: Register */
+$router->post('/register', function () use ($db) {
+    /* Try to register user */
+    /* todo Hier functie die probeert te registreren */
+    $feedback = register_user($db, $_POST);
+
+    // todo er komt een check in register get die deze redirect naar de homepage,
+    // todo dus user registered = user ingelogd dus naar homepage
+    /* Redirect to register GET route */
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/register/?error_msg=%s',
+        json_encode($feedback)));
+});
+
+//* MOUNT FOR ROOM VIEWS *//
 $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $username) {
+
     /* GET route: All Rooms Overview */
     $router->get('/', function () use ($db, $nav) {
+        /* Page content */
         $page_title = "Rooms overview";
         $page_subtitle = "Overview of all the rooms";
         $page_content = get_rooms_table(get_rooms($db));
         $navigation = get_navigation($nav, 5);
 
+        /* Choose Template */
         include use_template('main');
     });
 
-    /* GET route: view single room */
+    /* GET route: View Single Room */
     $router->get('/(\d+)', function ($room_id) use ($db, $room_info, $nav) {
 
         /* Page info */
@@ -185,15 +216,16 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $usern
         $size = $room_info['size'];
         $price = $room_info['price'];
 
-
         /* Choose Template */
-
         include use_template('room');
     });
 
-    /* GET & POST route: add room */
-    $router->match('GET|POST', '/add', function () use ($db, $nav, $username) {
-        /* ALLEEN BESCHIKBAAR VOOR OWNERS */
+    /* GET route: Add Room */
+    $router->get('/add', function () use ($db, $nav, $username) {
+        /* Get error msg from POST route */
+        if (isset($_GET['error_msg'])) {
+            $error_msg = get_error($_GET['error_msg']);
+        }
 
         /*Set page content */
         $page_title = "Add a room";
@@ -203,20 +235,22 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $usern
         $navigation = get_navigation($nav, 6);
         $form_action = '/DDWT-Eindopdracht/rooms/rooms/add';
 
-
-
-        if (isset($_POST["Submit"])){
-            $feedback = add_room($db, $_POST, $username);
-            $error_msg = get_error($feedback);
-        }
         /* Choose Template */
         include use_template('add');
     });
 
-    /* GET & POST route: edit room */
-    $router->match('GET|POST', '/edit/(\d+)', function ($room_id) use ($db, $nav, $username) {
+    /* GET route: Add Room */
+    $router->post('/add', function () use ($db, $username) {
+        /* Add room to database */
+        $feedback = add_room($db, $_POST, $username);
 
-        // todo $feedback = edit_room($db, $POST, $username);
+        /* Redirect to room GET route */
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/add?error_msg=%s',
+            json_encode($feedback)));
+    });
+
+    /* GET route: Edit Room */
+    $router->get('/edit/(\d+)', function ($room_id) use ($db, $nav, $username) {
         /*Set page content */
         $page_title = "Edit a room";
         $page_subtitle = "Please fill out the form";
@@ -227,29 +261,42 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $usern
 
         /* Choose Template */
         include use_template('add');
-
-        if (isset($_POST["Submit"])) {
-            $feedback = edit_room($db, $_POST, $username);
-            $error_msg = get_error($feedback);
-        }
     });
 
-    $router->delete('/(\d+)', function($id) use($db, $nav) {
-        $room_details = get_room_details($db, $id);
-        $username = $room_details['owner'];
+    /* POST route: Edit Room */
+    $router->post('/edit', function () use ($db, $username) {
+        /* Edit room */
+        // todo $feedback = edit_room($db, $POST, $username);
+        $feedback = edit_room($db, $_POST, $username);
+
+        // todo misschien andere redirect, even testen wat fijn werkt als gebruiker
+        /* Redirect to rooms overview GET route */
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
+            json_encode($feedback)));
+    });
+
+    /* DELETE route: Delete Room */
+    $router->delete('/(\d+)', function($id) use($db, $nav, $username) {
+        /* Try to delete room */
+        $room_info = get_room_details($db, $id);
+        $username = $room_info['owner'];
+        //todo check if username from db is same as session username
         $feedback = remove_room($db, $id, $username);
-//        get_error($feedback);
+
+        /* Redirect to rooms overview GET route */
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
+            json_encode($feedback)));
     });
 });
 
-/* ERROR route: route not found */
+/* ERROR route: Route not Found */
 $router->set404(function () {
     header('HTTP/1.1 404 Not Found');
     $feedback = [
-       "http-code" => 404,
-       "error-message" => "The route you tried to access does not exist.",
+       'type' => "Danger",
+       "message" => "404 : The route you tried to access does not exist.",
        ];
-    printf(get_error($feedback));
+    printf(get_error(json_encode($feedback)));
 });
 
 /* Run the router */

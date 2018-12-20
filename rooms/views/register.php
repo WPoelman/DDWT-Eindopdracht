@@ -42,11 +42,11 @@
                         </div>
                         <div class="form-group">
                             <label for="firstname">First name</label>
-                            <input type="text" class="form-control" id="firstname" placeholder="Johan" name="firstname" required>
+                            <input type="text" class="form-control" id="first_name" placeholder="Johan" name="first_name" required>
                         </div>
                         <div class="form-group">
                             <label for="lastname">Last name</label>
-                            <input type="text" class="form-control" id="lastname" placeholder="de Boer" name="lastname" required>
+                            <input type="text" class="form-control" id="last_name" placeholder="de Boer" name="last_name" required>
                         </div>
                         <div class="form-group">
                             <label for="birthdate">Date of birth</label>

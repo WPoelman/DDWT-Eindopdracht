@@ -338,7 +338,7 @@ function add_room($pdo, $room_info, $username)
         if ($inserted == 1) {
             return [
                 'type' => 'success',
-                'message' => sprintf("Room is successfully added!")
+                'message' => 'Room is successfully added!'
             ];
         } else {
             return [
@@ -395,10 +395,22 @@ function remove_room($pdo, $room_id, $username)
  * @param bool $feedback True if success, False if failure
  * @return string
  */
-function get_error($feedback){
+function get_error($feedback)
+{
+    $feedback = json_decode($feedback, True);
     $error_exp = '
-        <div class="alert alert-'.$feedback['type'].'" role="alert">
-            '.$feedback['message'].'
+        <div class="alert alert-' . $feedback['type'] . '" role="alert">
+            ' . $feedback['message'] . '
         </div>';
     return $error_exp;
+}
+
+/**
+ * Changes the HTTP Header to a given location
+ * @param string $location location to be redirected to
+ */
+function redirect($location)
+{
+    header(sprintf('Location: %s', $location));
+    die();
 }

@@ -61,8 +61,7 @@
                 <div class="form-group row">
                     <label for="inputType" class="col-sm-2">Type</label>
                     <div class="col-sm-6">
-                    <select class="custom-select">
-                        <option selected>Select a room type</option>
+                    <select class="custom-select" name="type">
                         <option value="room">Room</option>
                         <option value="apartment">Apartment</option>
                         <option value="room_in">Room in house</option>
