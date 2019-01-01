@@ -172,11 +172,10 @@ function register_user($pdo, $form_data){
     if (
         empty($form_data['username']) or
         empty($form_data['password']) or
-        empty($form_data['firstname']) or
-        empty($form_data['lastname']) or
+        empty($form_data['first_name']) or
+        empty($form_data['last_name']) or
         empty($form_data['birthdate']) or
-        empty($form_data['email']) or
-        empty($form_data['phonenumber'])
+        empty($form_data['email'])
     ) {
         return [
             'type' => 'danger',
@@ -209,16 +208,15 @@ function register_user($pdo, $form_data){
 
     /* Save user to database */
     try {
-        $stmt = $pdo->prepare('INSERT INTO user (username, password, firstname, lastname, birthdate, sex, email, role, phonenumber, studies, profession, biography, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$form_data['username'], $password, $form_data['firstname'], $form_data['lastname'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
-        $username = $pdo->lastInsertusername();
+        $stmt = $pdo->prepare('INSERT INTO user (username, password, first_name, last_name, birth_date, sex, e_mail, role, phone_number, studies, profession, biography, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$form_data['username'], $password, $form_data['first_name'], $form_data['last_name'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
+        /* $username = $pdo -> lastinstertid(); */
     } catch (PDOException $e) {
         return [
             'type' => 'danger',
             'message' => sprintf('There was an error: %s', $e->getMessage())
         ];
     }
-
 }
 
 /**
