@@ -407,6 +407,60 @@ function add_room($pdo, $room_info, $username)
 }
 
 /**
+ * Get all the optins of a specific user
+ * @param $pdo
+ * @param $username
+ * @return array
+ */
+function get_optins($pdo, $username){
+    $stmt = $pdo->prepare('SELECT * FROM opt_in WHERE username = ? ');
+    $stmt->execute([$username]);
+    $opt_ins = $stmt->fetchAll();
+    $opt_ins_exp = Array();
+    /* Create array with htmlspecialchars */
+    foreach ($opt_ins as $key => $optins_array){
+        foreach ($optins_array as $optins_key => $value){
+            $opt_ins_exp[$key][$optins_key] = htmlspecialchars($value);
+        }
+    }
+    return $opt_ins_exp;
+}
+
+/**
+ * Makes a table for all the optins of a user
+ * @param $opt_ins
+ * @return string
+ */
+function get_optins_table($opt_ins){
+    $table_exp = '
+        <table class = "table table-hover">
+        <thead>
+        <tr>
+            <th scope="col" class="col-sm-8"> Title </th>
+            <th scope="col" class="col-sm-1"> Size </th>
+            <th scope="col" class="col-sm-1"> Price </th>
+            <th scope="col" class="col-sm-2"> Photo </th>
+        </tr>
+        </thead>
+        <tbody>';
+    foreach($opt_ins as $key => $value){
+        $table_exp .= '
+        <tr>
+            <th scope="row">'.$value['message'].'</th>
+            <th scope="row">'.$value['id'].'</th>
+            <td><a href="" role="button" class="btn btn-primary">Delete</a></td>
+        </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
+}
+
+
+/**
  * Removes a room with a specific room_id
  * @param object $pdo db object
  * @param int $room_id id of the to be deleted room
@@ -416,7 +470,7 @@ function add_room($pdo, $room_info, $username)
 function remove_room($pdo, $room_id, $username)
 {
     /* Get room info */
-    $room_info = get_roominfo($pdo, $room_id);
+    $room_info = get_room_details($pdo, $room_id);
 
     /* Check if the user is allowed to edit the serie */
     if ($room_info['username'] =! $username){
@@ -466,3 +520,4 @@ function redirect($location)
     header(sprintf('Location: %s', $location));
     die();
 }
+
