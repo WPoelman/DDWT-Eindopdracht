@@ -162,12 +162,12 @@ function get_room_details($pdo, $room_id){
 
 /**
  * Get current username
- * @return bool current user id or False if not logged in
+ * @return bool True if user is current username or False if not logged in
  */
-function get_username(){
+function get_user_name(){
     session_start();
-    if (isset($_SESSION['username'])){
-        return $_SESSION['username'];
+    if (isset($_SESSION['user_name'])){
+        return $_SESSION['user_name'];
     } else {
         return False;
     }
@@ -238,7 +238,7 @@ function register_user($pdo, $form_data){
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
     ];
-    redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
 }
 
 /**
@@ -246,30 +246,30 @@ function register_user($pdo, $form_data){
  * @param $ID
  * @return array
  */
-function get_user($pdo, $username){
-    $stmt = $pdo->prepare('SELECT first_name, last_name FROM user where username = ?');
-    $stmt->execute([$username]);
+function get_user($pdo, $ID){
+    $stmt = $pdo->prepare('SELECT firstname, lastname FROM user where username = ?');
+    $stmt->execute([$ID]);
     $user_name = $stmt->fetch();
-    return sprintf("%s %s", htmlspecialchars($user_name['first_name']), htmlspecialchars($user_name['last_name']));
+    return sprintf("%s %s", htmlspecialchars($user_name['firstname']), htmlspecialchars($user_name['lastname']));
 
 }
 
-///** Getting user info
-// *
-// */
-//// TODO: fix the error invalid foreach() row 268
-//function get_user_info($pdo, $username){
-//    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
-//    $stmt->execute([$username]);
-//    $user_info = $stmt->fetch();
-//    $user_info_exp = Array();
-//
-//    /* Create array with htmlspecialchars */
-//    foreach ($user_info as $key => $value) {
-//        $user_info_exp[$key] = htmlspecialchars($value);
-//    }
-//    return $user_info_exp;
-//}
+/** Getting user info
+ *
+ */
+
+function get_user_info($pdo, $ID){
+    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
+    $stmt->execute([$ID]);
+    $user_info = $stmt->fetch();
+    $user_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($user_info as $key => $value) {
+        $user_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $user_info_exp;
+}
 
 
 
@@ -319,14 +319,27 @@ function log_in($pdo, $form_data){
         ];
     } else {
         session_start();
-        $_SESSION['username'] = $user_info['username'];
+        $_SESSION['user_id'] = $user_info['ID'];
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',
-                get_user($pdo, $_SESSION['username']))
+                get_user($pdo, $_SESSION['user_id']))
         ];
-        redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s',
+        redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s',
             json_encode($feedback)));
+    }
+}
+
+/** Check if user is logged in
+ * @return bool
+ */
+
+function check_login(){
+    session_start();
+    if (isset($_SESSION['user_id'])) {
+        return True;
+    } else {
+        return False;
     }
 }
 
@@ -492,25 +505,6 @@ function remove_room($pdo, $room_id, $username)
         return [
             'type' => 'warning',
             'message' => 'An error occurred. The room was not removed.'
-        ];
-    }
-}
-
-/**
- * Destroys a session of a user
- * @return array
- */
-function logout_user() {
-    session_start();
-    if (session_destroy()) {
-        return [
-            'type' => 'success',
-            'message' => sprintf('You are succesfully logged out')
-        ];
-    } else {
-        return [
-            'type' => 'danger',
-            'message' => sprintf('Logout Failed')
         ];
     }
 }
