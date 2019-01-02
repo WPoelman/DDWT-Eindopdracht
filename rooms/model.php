@@ -44,7 +44,6 @@ function use_template($template){
     return $template_doc;
 }
 
-
 /**
  * Creates navigation HTML code using given array
  * @param $template
@@ -108,8 +107,6 @@ function get_rooms($pdo){
  * @param $rooms
  * @return $table_exp
  */
-
-
 function get_rooms_table($rooms){
     $table_exp = '
         <table class = "table table-hover">
@@ -139,6 +136,7 @@ function get_rooms_table($rooms){
     ';
     return $table_exp;
 }
+
 /**
  * Generates an array with room details
  * @param $pdo
@@ -161,6 +159,7 @@ function get_room_details($pdo, $room_id){
     }
     return $room_info_exp;
 }
+
 /**
  * Register new users and assign the values to database
  * @param $pdo
@@ -217,6 +216,40 @@ function register_user($pdo, $form_data){
             'message' => sprintf('There was an error: %s', $e->getMessage())
         ];
     }
+
+    /* Login user and redirect */
+    session_start();
+    $_SESSION['username'] = $form_data['username'];
+    $feedback = [
+        'type' => 'success',
+        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
+    ];
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+}
+
+/**
+ * Get current user id
+ * @return bool current user id or False if not logged in
+ */
+function get_user_id(){
+    if (isset($_SESSION['username'])){
+        return $_SESSION['username'];
+    } else {
+        return False;
+    }
+}
+
+/**
+ * @param $pdo
+ * @param $ID
+ * @return array
+ */
+function get_user($pdo, $ID){
+    $stmt = $pdo->prepare('SELECT firstname, lastname FROM user where username = ?');
+    $stmt->execute([$ID]);
+    $user_name = $stmt->fetch();
+    return sprintf("%s %s", htmlspecialchars($user_name['firstname']), htmlspecialchars($user_name['lastname']));
+
 }
 
 /**

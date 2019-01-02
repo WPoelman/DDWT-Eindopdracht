@@ -156,9 +156,10 @@ $router->post('/account', function () use ($db, $username) {
 /* GET route: Register */
 $router->get('/register', function () use ($db, $nav) {
     /* Get error msg from POST route */
-    if (isset($_GET['error_msg'])) {
-        $error_msg = get_error($_GET['error_msg']);
+    if (isset($_GET['feedback'])) {
+        $feedback = get_error($_GET['feedback']);
     }
+
     /*Set page content */
     $page_title = "Register";
     $page_subtitle = "Please fill out the form";
@@ -174,7 +175,6 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user */
-    /* todo Hier functie die probeert te registreren */
     $feedback = register_user($db, $_POST);
 
     // todo er komt een check in register get die deze redirect naar de homepage,
