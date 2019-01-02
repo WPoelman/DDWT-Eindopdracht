@@ -476,6 +476,25 @@ function remove_room($pdo, $room_id, $username)
 }
 
 /**
+ * Destroys a session of a user
+ * @return array
+ */
+function logout_user() {
+    session_start();
+    if (session_destroy()) {
+        return [
+            'type' => 'success',
+            'message' => sprintf('You are succesfully logged out')
+        ];
+    } else {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('Logout Failed')
+        ];
+    }
+}
+
+/**
  * Creats HTML alert code with information about the success or failure
  * @param bool $feedback True if success, False if failure
  * @return string

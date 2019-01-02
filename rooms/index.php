@@ -55,6 +55,10 @@ $nav = Array(
         'name' => 'Edit',
         'url' => '/DDWT-Eindopdracht/rooms/rooms/edit'
     ),
+    8 => Array(
+        'name' => 'Logout',
+        'url' => '/DDWT-Eindopdracht/rooms/logout'
+    ),
 );
 
 /* Create Router instance */
@@ -78,7 +82,11 @@ $router->get('/', function () use ($nav) {
     /* Choose Template */
     include use_template('main');
 });
-
+/* GET route: Log out*/
+$router->get('/logout', function () {
+    $feedback = logout_user();
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
+});
 /* GET route: Contact Page */
 $router->get('/contact', function () use ($nav) {
     /*Set page content */
@@ -90,6 +98,8 @@ $router->get('/contact', function () use ($nav) {
     /* Choose Template */
     include use_template('main');
 });
+
+
 
 /* GET route: Log In */
 $router->get('/login', function () use ($db, $nav){
