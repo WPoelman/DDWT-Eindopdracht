@@ -161,11 +161,25 @@ function get_room_details($pdo, $room_id){
 }
 
 /**
+ * Get current user id
+ * @return bool current user id or False if not logged in
+ */
+function get_user_id(){
+    session_start();
+    if (isset($_SESSION['user_id'])){
+        return $_SESSION['user_id'];
+    } else {
+        return False;
+    }
+}
+
+/**
  * Register new users and assign the values to database
  * @param $pdo
  * @param $form_data
  * @return array
  */
+
 function register_user($pdo, $form_data){
     /* Check if there are no empty values */
     if (
@@ -228,18 +242,6 @@ function register_user($pdo, $form_data){
 }
 
 /**
- * Get current user id
- * @return bool current user id or False if not logged in
- */
-function get_user_id(){
-    if (isset($_SESSION['username'])){
-        return $_SESSION['username'];
-    } else {
-        return False;
-    }
-}
-
-/**
  * @param $pdo
  * @param $ID
  * @return array
@@ -251,6 +253,25 @@ function get_user($pdo, $ID){
     return sprintf("%s %s", htmlspecialchars($user_name['firstname']), htmlspecialchars($user_name['lastname']));
 
 }
+
+/** Getting user info
+ *
+ */
+
+function get_user_info($pdo, $ID){
+    $stmt = $pdo->prepare('SELECT * FROM user WHERE id = ?');
+    $stmt->execute([$ID]);
+    $user_info = $stmt->fetch();
+    $user_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($user_info as $key => $value) {
+        $user_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $user_info_exp;
+}
+
+
 
 /**
  * Allow an existing user to login using their credentials
