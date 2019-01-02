@@ -35,31 +35,6 @@ function connect_db($host, $db, $user, $pass){
 }
 
 /**
- * Check if the route exist
- * @param string $route_uri URI to be matched
- * @param string $request_type request method
- * @return bool
- *
- */
-function new_route($route_uri, $request_type){
-    $route_uri_expl = array_filter(explode('/', $route_uri));
-    $current_path_expl = array_filter(explode('/',parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)));
-    if ($route_uri_expl == $current_path_expl && $_SERVER['REQUEST_METHOD'] == strtoupper($request_type)) {
-        return True;
-    }
-}
-
-/**
- * Creates a new navigation array item using url and active status
- * @param string $url The url of the navigation item
- * @param bool $active Set the navigation item to active or inactive
- * @return array
- */
-function na($url, $active){
-    return [$url, $active];
-}
-
-/**
  * Creates filename to the template
  * @param string $template filename of the template without extension
  * @return string
@@ -67,26 +42,6 @@ function na($url, $active){
 function use_template($template){
     $template_doc = sprintf("views/%s.php", $template);
     return $template_doc;
-}
-
-/**
- * Creates breadcrumb HTML code using given array
- * @param array $breadcrumbs Array with as Key the page name and as Value the corresponding url
- * @return string html code that represents the breadcrumbs
- */
-function get_breadcrumbs($breadcrumbs) {
-    $breadcrumbs_exp = '<nav aria-label="breadcrumb">';
-    $breadcrumbs_exp .= '<ol class="breadcrumb" >';
-    foreach ($breadcrumbs as $name => $info) {
-        if ($info[1]){
-            $breadcrumbs_exp .= '<li class="breadcrumb-item active " aria-current="page">'.$name.'</li>';
-        }else{
-            $breadcrumbs_exp .= '<li class="breadcrumb-item"><a href="'.$info[0].'">'.$name.'</a></li>';
-        }
-    }
-    $breadcrumbs_exp .= '</ol>';
-    $breadcrumbs_exp .= '</nav>';
-    return $breadcrumbs_exp;
 }
 
 /**
@@ -130,29 +85,28 @@ function get_navigation($template, $active_id){
 
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM room');
-    $stmt2 = $pdo->prepare('SELECT street, city from room_address');
     $stmt->execute();
+    $room_info = $stmt->fetchAll();
+
+    $stmt2 = $pdo->prepare('SELECT * FROM room_address ');
     $stmt2->execute();
-    $rooms = $stmt->fetchAll();
-    $rooms+=($stmt2->fetchAll());
-    $room_exp = Array();
+    $room_info += ($stmt2->fetchAll());
+    $room_info_exp = Array();
 
 
     /* Create array with htmlspecialchars */
-    foreach ($rooms as $key => $value){
-        foreach ($value as $user_key => $user_input) {
-            $room_exp[$key][$user_key] = htmlspecialchars($user_input);
+    foreach ($room_info as $key => $room_array){
+        foreach ($room_array as $room_key => $value) {
+            $room_info_exp[$key][$room_key] = htmlspecialchars($value);
         }
     }
-    return $room_exp;
+    return $room_info_exp;
 }
 
 /** Make room overview table
  * @param $rooms
  * @return $table_exp
  */
-
-
 function get_rooms_table($rooms){
     $table_exp = '
         <table class = "table table-hover">
@@ -182,6 +136,7 @@ function get_rooms_table($rooms){
     ';
     return $table_exp;
 }
+
 /**
  * Generates an array with room details
  * @param $pdo
@@ -191,20 +146,20 @@ function get_rooms_table($rooms){
 function get_room_details($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
     $stmt->execute([$room_id]);
-    $room_details = $stmt->fetchAll();
+    $room_info = $stmt->fetch();
 
-
-    $stmt2 = $pdo->prepare('SELECT * FROM room_address WHERE zip_code = ? and number = ?');
-    $stmt2->execute([$room_details['zip_code'],$room_details['number']]);
-    $room_details+=($stmt2->fetchAll());
-    $room_details_exp = Array();
+    $stmt2 = $pdo->prepare('SELECT * FROM room_address WHERE zip_code = ? AND number = ? ');
+    $stmt2->execute([$room_info['zip_code'], $room_info['number']]);
+    $room_info += ($stmt2->fetch());
+    $room_info_exp = Array();
 
     /* Create array with htmlspecialchars */
-    foreach ($room_details as $key => $value){
-        $room_details_exp[$key] = htmlspecialchars($value);
+    foreach ($room_info as $key => $value){
+        $room_info_exp[$key] = htmlspecialchars($value);
     }
-    return $room_details_exp;
+    return $room_info_exp;
 }
+
 /**
  * Register new users and assign the values to database
  * @param $pdo
@@ -216,11 +171,10 @@ function register_user($pdo, $form_data){
     if (
         empty($form_data['username']) or
         empty($form_data['password']) or
-        empty($form_data['firstname']) or
-        empty($form_data['lastname']) or
+        empty($form_data['first_name']) or
+        empty($form_data['last_name']) or
         empty($form_data['birthdate']) or
-        empty($form_data['email']) or
-        empty($form_data['phonenumber'])
+        empty($form_data['email'])
     ) {
         return [
             'type' => 'danger',
@@ -253,15 +207,48 @@ function register_user($pdo, $form_data){
 
     /* Save user to database */
     try {
-        $stmt = $pdo->prepare('INSERT INTO user (username, password, firstname, lastname, birthdate, sex, email, role, phonenumber, studies, profession, biography, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$form_data['username'], $password, $form_data['firstname'], $form_data['lastname'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
-        $username = $pdo->lastInsertusername();
+        $stmt = $pdo->prepare('INSERT INTO user (username, password, first_name, last_name, birth_date, sex, e_mail, role, phone_number, studies, profession, biography, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$form_data['username'], $password, $form_data['first_name'], $form_data['last_name'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
+        /* $username = $pdo -> lastinstertid(); */
     } catch (PDOException $e) {
         return [
             'type' => 'danger',
             'message' => sprintf('There was an error: %s', $e->getMessage())
         ];
     }
+
+    /* Login user and redirect */
+    session_start();
+    $_SESSION['username'] = $form_data['username'];
+    $feedback = [
+        'type' => 'success',
+        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
+    ];
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+}
+
+/**
+ * Get current user id
+ * @return bool current user id or False if not logged in
+ */
+function get_user_id(){
+    if (isset($_SESSION['username'])){
+        return $_SESSION['username'];
+    } else {
+        return False;
+    }
+}
+
+/**
+ * @param $pdo
+ * @param $ID
+ * @return array
+ */
+function get_user($pdo, $ID){
+    $stmt = $pdo->prepare('SELECT firstname, lastname FROM user where username = ?');
+    $stmt->execute([$ID]);
+    $user_name = $stmt->fetch();
+    return sprintf("%s %s", htmlspecialchars($user_name['firstname']), htmlspecialchars($user_name['lastname']));
 
 }
 
@@ -333,6 +320,7 @@ function add_room($pdo, $room_info, $username)
 {
     /* Check if all required fields are set */
     if (
+        empty($room_info['title']) or
         empty($room_info['size']) or
         empty($room_info['price']) or
         empty($room_info['type']) or
@@ -365,9 +353,10 @@ function add_room($pdo, $room_info, $username)
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted == 1) {
-        $stmt2 = $pdo->prepare("INSERT INTO room (owner, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt2 = $pdo->prepare("INSERT INTO room (owner, title, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt2->execute([
             $username,
+            $room_info['title'],
             $room_info['size'],
             $room_info['picture'],
             $room_info['price'],
@@ -380,7 +369,7 @@ function add_room($pdo, $room_info, $username)
         if ($inserted == 1) {
             return [
                 'type' => 'success',
-                'message' => sprintf("Room is successfully added!")
+                'message' => 'Room is successfully added!'
             ];
         } else {
             return [
@@ -437,10 +426,22 @@ function remove_room($pdo, $room_id, $username)
  * @param bool $feedback True if success, False if failure
  * @return string
  */
-function get_error($feedback){
+function get_error($feedback)
+{
+    $feedback = json_decode($feedback, True);
     $error_exp = '
-        <div class="alert alert-'.$feedback['type'].'" role="alert">
-            '.$feedback['message'].'
+        <div class="alert alert-' . $feedback['type'] . '" role="alert">
+            ' . $feedback['message'] . '
         </div>';
     return $error_exp;
+}
+
+/**
+ * Changes the HTTP Header to a given location
+ * @param string $location location to be redirected to
+ */
+function redirect($location)
+{
+    header(sprintf('Location: %s', $location));
+    die();
 }
