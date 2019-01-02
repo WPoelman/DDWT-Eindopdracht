@@ -17,11 +17,9 @@ $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 /* Credentials */
 // TODO: Room id veranderen test variables weghalen
-$room_id = $_GET('room_id');
-$room_info = get_room_details($db, $room_id);
-$user_id = get_user_id();
-$username = get_user($db, $user_id);
-$user_info = get_user_info($db, $user_id);
+
+$username = get_username();
+//$user_info = get_user_info($db, $username);
 
 /* Set the default routes for the navigation bar */
 $nav = Array(
@@ -134,29 +132,31 @@ $router->post('/login', function () use ($db){
 });
 
 /* GET route: Account Overview*/
-$router->get('/account', function () use ($db, $nav, $user_id, $user_info, $username) {
 
+$router->get('/account', function () use ($db, $nav, $username) {
+    //$username = $_SESSION['username'];
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
     }
-    $feedback = get_user_info($db, $user_id);
+    //$feedback = get_user_info($db, $username);
 
     /*Set page content */
-    $page_title = "Account Overview. Hallo $username]!";
+    $page_title = "Account Overview. Hallo $username!";
     $page_subtitle = "View and edit your account information";
 
     /* Page content */
-    $name = $user_info['name'];
-    $sex = $user_info['sex'];
-    $email = $user_info['e_mail'];
-    $phone_number = $user_info['phone_number'];
-    $birth_date = $user_info['birth_date'];
-    $role = $user_info['role'];
-    $profession = $user_info['profession'];
-    $studies = $user_info['studies'];
-    $biography = $user_info['biography'];
-    $picture = $user_info['profile_picture'];
+    $page_content = "Page content here";
+//    $name = $user_info['username'];
+//    $sex = $user_info['sex'];
+//    $email = $user_info['e_mail'];
+//    $phone_number = $user_info['phone_number'];
+//    $birth_date = $user_info['birth_date'];
+//    $role = $user_info['role'];
+//    $profession = $user_info['profession'];
+//    $studies = $user_info['studies'];
+//    $biography = $user_info['biography'];
+//    $picture = $user_info['profile_picture'];
 
     $submit_btn = "Submit";
     $navigation = get_navigation($nav, 2);
@@ -209,7 +209,7 @@ $router->post('/register', function () use ($db) {
 });
 
 //* MOUNT FOR ROOM VIEWS *//
-$router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $username) {
+$router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: All Rooms Overview */
     $router->get('/', function () use ($db, $nav) {
@@ -224,7 +224,9 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $usern
     });
 
     /* GET route: View Single Room */
-    $router->get('/(\d+)', function ($room_id) use ($db, $room_info, $nav) {
+    $router->get('/(\d+)', function () use ($db, $nav) {
+        $room_id = $_GET['room_id'];
+        $room_info = get_room_details($db, $room_id);
 
         /* Page info */
         $page_title = sprintf("Information about %s", $room_info['title']);
@@ -274,7 +276,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $room_info, $usern
     });
 
     /* GET route: Edit Room */
-    $router->get('/edit/(\d+)', function ($room_id) use ($db, $nav, $username) {
+    $router->get('/edit/(\d+)', function () use ($db, $nav, $username) {
         /*Set page content */
         $page_title = "Edit a room";
         $page_subtitle = "Please fill out the form";
