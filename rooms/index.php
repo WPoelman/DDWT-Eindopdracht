@@ -134,6 +134,10 @@ $router->post('/login', function () use ($db){
 /* GET route: Account Overview*/
 
 $router->get('/account', function () use ($db, $nav, $username) {
+    // todo: check if logged in:
+    // if (!check_login()) {
+    //  redirect('/DDWT-Eindopdracht/rooms/login/');
+    // }
     //$username = $_SESSION['username'];
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
@@ -147,6 +151,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
 
     /* Page content */
     $page_content = "Page content here";
+    // todo: account view
 //    $name = $user_info['username'];
 //    $sex = $user_info['sex'];
 //    $email = $user_info['e_mail'];
@@ -203,6 +208,10 @@ $router->post('/register', function () use ($db) {
 
     // todo er komt een check in register get die deze redirect naar de homepage,
     // todo dus user registered = user ingelogd dus naar homepage
+    // todo TESTEN
+    // if (check_login()) {
+    //    redirect('/DDWT-Eindopdracht/rooms');
+
     /* Redirect to register GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/register/?error_msg=%s',
         json_encode($feedback)));
@@ -212,6 +221,11 @@ $router->post('/register', function () use ($db) {
 $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: All Rooms Overview */
+    // todo: TESTEN
+    // if (!check_login() {
+    // redirect ('DDWT-Eindopdracht/rooms/login');
+    // }
+    // todo: TESTEN if (!check_role()) {}
     $router->get('/', function () use ($db, $nav) {
         /* Page content */
         $page_title = "Rooms overview";
@@ -225,6 +239,12 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: View Single Room */
     $router->get('/(\d+)', function () use ($db, $nav) {
+        // todo: check if logged in user is the same as editor
+        // todo: TEST
+        // $display_buttons = False;
+        // if ($_SESSION['username'] == $room_info['owner']) {
+        //   $display_buttons = True;
+
         $room_id = $_GET['room_id'];
         $room_info = get_room_details($db, $room_id);
 
@@ -248,6 +268,8 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: Add Room */
     $router->get('/add', function () use ($db, $nav, $username) {
+        // todo: TESTEN if (check_role()) {
+
         /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) {
             $error_msg = get_error($_GET['error_msg']);
@@ -268,6 +290,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     /* GET route: Add Room */
     $router->post('/add', function () use ($db, $username) {
         /* Add room to database */
+        // todo: TESTEN if (check_role()) {
         $feedback = add_room($db, $_POST, $username);
 
         /* Redirect to room GET route */
@@ -278,6 +301,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     /* GET route: Edit Room */
     $router->get('/edit/(\d+)', function () use ($db, $nav, $username) {
         /*Set page content */
+        // todo: TESTEN if (check_role()){
         $page_title = "Edit a room";
         $page_subtitle = "Please fill out the form";
         $page_content = "Edit your room";
@@ -292,7 +316,8 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     /* POST route: Edit Room */
     $router->post('/edit', function () use ($db, $username) {
         /* Edit room */
-        // todo $feedback = edit_room($db, $POST, $username);
+
+        // todo: TESTEN if (check_role()){
         $feedback = edit_room($db, $_POST, $username);
 
         // todo misschien andere redirect, even testen wat fijn werkt als gebruiker
@@ -304,9 +329,13 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     /* DELETE route: Delete Room */
     $router->delete('/(\d+)', function($id) use($db, $nav, $username) {
         /* Try to delete room */
+        // todo: if (check_role()){
         $room_info = get_room_details($db, $id);
         $username = $room_info['owner'];
         //todo check if username from db is same as session username
+        //$display_buttons = False;
+        // if ($_SESSION['username']) == $room_info['owner']){
+        //   $display_buttons = True;
         $feedback = remove_room($db, $id, $username);
 
         /* Redirect to rooms overview GET route */

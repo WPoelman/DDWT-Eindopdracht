@@ -343,6 +343,19 @@ function check_login(){
     }
 }
 
+/** Check role of user
+ * @return bool
+ */
+// todo: TESTEN. Zal zoiets werken?
+/* function check_role(){
+    session_start();
+    if ($_SESSION['role'] == 'owner'){
+        return True;
+    } else {
+        return False;
+    }
+}
+*/
 /**
  * Add room to the database
  * @param object $pdo db object
@@ -534,3 +547,46 @@ function redirect($location)
     die();
 }
 
+// todo: TESTEN HTTP AUTHENTICATION
+
+/*
+/**
+ * Set credentials for HTTP Authentication
+ * @param string $username and string $password
+ * @return array $username and array $password
+ */
+
+/*
+
+function set_cred($username, $password){
+    return [
+        'username' => $username,
+        'password' => $password
+    ];
+}
+
+/**
+ * Checking credentials for access to the server
+ * @param array $cred
+ * @return Boolean values
+ */
+
+/*
+function check_cred($cred){
+    if(!isset($_SERVER['PHP_AUTH_USER'])){
+        return False;
+    }
+    else {
+        if($_SERVER['PHP_AUTH_USER'] != $cred['username']){
+            return False;
+        }
+        elseif ($_SERVER['PHP_AUTH_PW'] != $cred['password']){
+            return False;
+        }
+        else {
+            return True;
+        }
+    }
+}
+
+*/
