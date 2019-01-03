@@ -160,6 +160,18 @@ function get_room_details($pdo, $room_id){
 }
 
 /**
+ * Get current role of user
+ * @return bool
+ */
+function get_user_role(){
+    if (isset($_SESSION['role'])){
+        return $_SESSION['role'];
+    } else {
+        return False;
+    }
+}
+
+/**
  * Get current username
  * @return bool current user id or False if not logged in
  */
@@ -233,6 +245,7 @@ function register_user($pdo, $form_data){
     /* Login user and redirect */
     session_start();
     $_SESSION['username'] = $form_data['username'];
+    $_SESSION['role'] = $form_data['role'];
     $feedback = [
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
@@ -319,6 +332,9 @@ function log_in($pdo, $form_data){
     } else {
         session_start();
         $_SESSION['username'] = $user_info['username'];
+        // saves the role of the user in the session
+        $_SESSION['role'] = $user_info['role'];
+
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',

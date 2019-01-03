@@ -19,6 +19,7 @@ $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 // TODO: Room id veranderen test variables weghalen
 
 $username = get_username();
+$role = get_user_role();
 //$user_info = get_user_info($db, $username);
 
 /* Set the default routes for the navigation bar */
