@@ -19,6 +19,7 @@
 
 <!-- Content -->
 <div class="container">
+    <div class ="row"> <br></div>
 
     <div class="row">
 
@@ -30,8 +31,20 @@
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <p><?= $page_content ?></p>
+            <form action="/DDWT-Eindopdracht/rooms/login/" method="POST">
+                <div class="form-group">
+                    <label for="inputUsername">Username</label>
+                    <input type="text" class="form-control" id="inputUsername" placeholder="Enter username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" id="inputPassword" placeholder="Enter password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
             <?php if(isset($left_content)){echo $left_content;} ?>
         </div>
+
 
         <!-- Right column -->
         <div class="col-md-4">

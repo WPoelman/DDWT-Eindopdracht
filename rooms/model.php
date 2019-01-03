@@ -67,7 +67,6 @@ function get_navigation($template, $active_id){
             $navigation_exp .= '<li class="nav-item">';
             $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
         }
-
         $navigation_exp .= '</li>';
     }
     $navigation_exp .= '
@@ -238,7 +237,7 @@ function register_user($pdo, $form_data){
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
     ];
-    redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s', json_encode($feedback)));
 }
 
 /**
@@ -325,7 +324,7 @@ function log_in($pdo, $form_data){
             'message' => sprintf('%s, you were logged in successfully!',
                 get_user($pdo, $_SESSION['username']))
         ];
-        redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s',
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
             json_encode($feedback)));
     }
 }

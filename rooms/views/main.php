@@ -19,7 +19,7 @@
 
 <!-- Content -->
 <div class="container">
-
+    <div class ="row"> <br></div>
     <div class="row">
 
         <!-- Left column -->
@@ -30,16 +30,11 @@
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <p><?= $page_content ?></p>
-            <?php if(isset($left_content)){echo $left_content;} ?>
+            <?php if(isset($login)) : ?>
+                <a href="/DDWT-Eindopdracht/rooms/login" role="button" class="btn btn-primary">Login</a><br><br>
+                <?php echo $login; ?><a href="/DDWT-Eindopdracht/rooms/register">Register here</a>
+            <?php endif; ?>
         </div>
-
-        <!-- Right column -->
-        <div class="col-md-4">
-
-            <?php if(isset($right_column)){echo $right_column;} ?>
-
-        </div>
-
     </div>
 </div>
 
