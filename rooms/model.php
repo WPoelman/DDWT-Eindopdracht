@@ -67,6 +67,7 @@ function get_navigation($template, $active_id){
             $navigation_exp .= '<li class="nav-item">';
             $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
         }
+
         $navigation_exp .= '</li>';
     }
     $navigation_exp .= '
@@ -160,18 +161,6 @@ function get_room_details($pdo, $room_id){
 }
 
 /**
- * Get current role of user
- * @return bool
- */
-function get_user_role(){
-    if (isset($_SESSION['role'])){
-        return $_SESSION['role'];
-    } else {
-        return False;
-    }
-}
-
-/**
  * Get current username
  * @return bool current user id or False if not logged in
  */
@@ -183,6 +172,29 @@ function get_username(){
         return False;
     }
 }
+
+/**
+ * Checks if user is logged in
+ * @return bool
+ */
+
+function check_login(){
+    session_start();
+    if (isset($_SESSION['user_id'])) {
+        return True;
+    } else {
+        return False;
+    }
+}
+
+/** TODO: TEST
+ * function get_user_role(){
+ * session_start();
+ * if ($_SESSION['role'])) {
+ *    return True
+ * } else {
+ *   return False
+ */
 
 /**
  * Register new users and assign the values to database
@@ -245,12 +257,11 @@ function register_user($pdo, $form_data){
     /* Login user and redirect */
     session_start();
     $_SESSION['username'] = $form_data['username'];
-    $_SESSION['role'] = $form_data['role'];
     $feedback = [
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
     ];
-    redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
 }
 
 /**
@@ -332,15 +343,12 @@ function log_in($pdo, $form_data){
     } else {
         session_start();
         $_SESSION['username'] = $user_info['username'];
-        // saves the role of the user in the session
-        $_SESSION['role'] = $user_info['role'];
-
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',
                 get_user($pdo, $_SESSION['username']))
         ];
-        redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s',
             json_encode($feedback)));
     }
 }
