@@ -67,7 +67,6 @@ function get_navigation($template, $active_id){
             $navigation_exp .= '<li class="nav-item">';
             $navigation_exp .= '<a class="nav-link" href="'.$info['url'].'">'.$info['name'].'</a>';
         }
-
         $navigation_exp .= '</li>';
     }
     $navigation_exp .= '
@@ -161,13 +160,25 @@ function get_room_details($pdo, $room_id){
 }
 
 /**
- * Get current username
- * @return bool True if user is current username or False if not logged in
+ * Get current role of user
+ * @return bool
  */
-function get_user_name(){
+function get_user_role(){
+    if (isset($_SESSION['role'])){
+        return $_SESSION['role'];
+    } else {
+        return False;
+    }
+}
+
+/**
+ * Get current username
+ * @return bool current user id or False if not logged in
+ */
+function get_username(){
     session_start();
-    if (isset($_SESSION['user_name'])){
-        return $_SESSION['user_name'];
+    if (isset($_SESSION['username'])){
+        return $_SESSION['username'];
     } else {
         return False;
     }
@@ -234,11 +245,12 @@ function register_user($pdo, $form_data){
     /* Login user and redirect */
     session_start();
     $_SESSION['username'] = $form_data['username'];
+    $_SESSION['role'] = $form_data['role'];
     $feedback = [
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
     ];
-    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s', json_encode($feedback)));
 }
 
 /**
@@ -246,30 +258,30 @@ function register_user($pdo, $form_data){
  * @param $ID
  * @return array
  */
-function get_user($pdo, $ID){
-    $stmt = $pdo->prepare('SELECT firstname, lastname FROM user where username = ?');
-    $stmt->execute([$ID]);
+function get_user($pdo, $username){
+    $stmt = $pdo->prepare('SELECT first_name, last_name FROM user where username = ?');
+    $stmt->execute([$username]);
     $user_name = $stmt->fetch();
-    return sprintf("%s %s", htmlspecialchars($user_name['firstname']), htmlspecialchars($user_name['lastname']));
+    return sprintf("%s %s", htmlspecialchars($user_name['first_name']), htmlspecialchars($user_name['last_name']));
 
 }
 
-/** Getting user info
- *
- */
-
-function get_user_info($pdo, $ID){
-    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
-    $stmt->execute([$ID]);
-    $user_info = $stmt->fetch();
-    $user_info_exp = Array();
-
-    /* Create array with htmlspecialchars */
-    foreach ($user_info as $key => $value) {
-        $user_info_exp[$key] = htmlspecialchars($value);
-    }
-    return $user_info_exp;
-}
+///** Getting user info
+// *
+// */
+//// TODO: fix the error invalid foreach() row 268
+//function get_user_info($pdo, $username){
+//    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
+//    $stmt->execute([$username]);
+//    $user_info = $stmt->fetch();
+//    $user_info_exp = Array();
+//
+//    /* Create array with htmlspecialchars */
+//    foreach ($user_info as $key => $value) {
+//        $user_info_exp[$key] = htmlspecialchars($value);
+//    }
+//    return $user_info_exp;
+//}
 
 
 
@@ -319,43 +331,20 @@ function log_in($pdo, $form_data){
         ];
     } else {
         session_start();
-        $_SESSION['user_id'] = $user_info['ID'];
+        $_SESSION['username'] = $user_info['username'];
+        // saves the role of the user in the session
+        $_SESSION['role'] = $user_info['role'];
+
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',
-                get_user($pdo, $_SESSION['user_id']))
+                get_user($pdo, $_SESSION['username']))
         ];
-        redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s',
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
             json_encode($feedback)));
     }
 }
 
-/** Check if user is logged in
- * @return bool
- */
-
-function check_login(){
-    session_start();
-    if (isset($_SESSION['user_id'])) {
-        return True;
-    } else {
-        return False;
-    }
-}
-
-/** Check role of user
- * @return bool
- */
-// todo: TESTEN. Zal zoiets werken?
-/* function check_role(){
-    session_start();
-    if ($_SESSION['role'] == 'owner'){
-        return True;
-    } else {
-        return False;
-    }
-}
-*/
 /**
  * Add room to the database
  * @param object $pdo db object
@@ -523,6 +512,25 @@ function remove_room($pdo, $room_id, $username)
 }
 
 /**
+ * Destroys a session of a user
+ * @return array
+ */
+function logout_user() {
+    session_start();
+    if (session_destroy()) {
+        return [
+            'type' => 'success',
+            'message' => sprintf('You are succesfully logged out')
+        ];
+    } else {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('Logout Failed')
+        ];
+    }
+}
+
+/**
  * Creats HTML alert code with information about the success or failure
  * @param bool $feedback True if success, False if failure
  * @return string
@@ -547,46 +555,3 @@ function redirect($location)
     die();
 }
 
-// todo: TESTEN HTTP AUTHENTICATION
-
-/*
-/**
- * Set credentials for HTTP Authentication
- * @param string $username and string $password
- * @return array $username and array $password
- */
-
-/*
-
-function set_cred($username, $password){
-    return [
-        'username' => $username,
-        'password' => $password
-    ];
-}
-
-/**
- * Checking credentials for access to the server
- * @param array $cred
- * @return Boolean values
- */
-
-/*
-function check_cred($cred){
-    if(!isset($_SERVER['PHP_AUTH_USER'])){
-        return False;
-    }
-    else {
-        if($_SERVER['PHP_AUTH_USER'] != $cred['username']){
-            return False;
-        }
-        elseif ($_SERVER['PHP_AUTH_PW'] != $cred['password']){
-            return False;
-        }
-        else {
-            return True;
-        }
-    }
-}
-
-*/

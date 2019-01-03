@@ -19,6 +19,7 @@ $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 // TODO: Room id veranderen test variables weghalen
 
 $username = get_username();
+$role = get_user_role();
 //$user_info = get_user_info($db, $username);
 
 /* Set the default routes for the navigation bar */
@@ -28,34 +29,26 @@ $nav = Array(
         'url' => '/DDWT-Eindopdracht/rooms'
     ),
     1 => Array(
-        'name' => 'Login',
-        'url' => '/DDWT-Eindopdracht/rooms/login'
-    ),
-    2 => Array(
         'name' => 'My Account',
         'url' => '/DDWT-Eindopdracht/rooms/account'
     ),
-    3 => Array(
+    2 => Array(
         'name' => 'Contact',
         'url' => '/DDWT-Eindopdracht/rooms/contact'
     ),
-    4 => Array(
-        'name' => 'Register',
-        'url' => '/DDWT-Eindopdracht/rooms/register'
-    ),
-    5 => Array(
+    3 => Array(
         'name' => 'Overview',
         'url' => '/DDWT-Eindopdracht/rooms/rooms'
     ),
-    6 => Array(
+    4 => Array(
         'name' => 'Add',
         'url' => '/DDWT-Eindopdracht/rooms/rooms/add'
     ),
-    7 => Array(
+    5 => Array(
         'name' => 'Edit',
         'url' => '/DDWT-Eindopdracht/rooms/rooms/edit'
     ),
-    8 => Array(
+    6 => Array(
         'name' => 'Logout',
         'url' => '/DDWT-Eindopdracht/rooms/logout'
     ),
@@ -74,10 +67,11 @@ $router->get('/', function () use ($nav) {
     }
 
     /*Set page content */
-    $page_title = "Homepage";
-    $page_subtitle = "RoomTurbo: Not related to new kids.";
+    $page_title = "RoomTurbo";
+    $page_subtitle = "Not related to new kids.";
     $page_content = "See nice rooms, meet new owners.";
     $navigation = get_navigation($nav, 0);
+    $login = "You don't have an account? ";
 
     /* Choose Template */
     include use_template('main');
@@ -93,7 +87,7 @@ $router->get('/contact', function () use ($nav) {
     $page_title = "Contact info";
     $page_subtitle = "Contact us";
     $page_content = "To contact us, mail wessel@roomturbo.nl";
-    $navigation = get_navigation($nav, 3);
+    $navigation = get_navigation($nav, 2);
 
     /* Choose Template */
     include use_template('main');
@@ -112,9 +106,7 @@ $router->get('/login', function () use ($db, $nav){
     $page_title = "Log In";
     $page_subtitle = "Log in with your username and password.";
     $page_content = "No account yet? You can register.";
-    $submit_btn = "Submit";
     $navigation = get_navigation($nav, 1);
-    $form_action = '/DDWT-Eindopdracht/rooms/login';
 
     /* Choose Template */
     include use_template('login');
@@ -123,12 +115,9 @@ $router->get('/login', function () use ($db, $nav){
 /* POST route: Log In */
 $router->post('/login', function () use ($db){
     /* Try to login */
-    /* todo Hier functie die probeert in te loggen */
-    $feedback = login_user($db, $_POST);
-
+    $feedback = log_in($db, $_POST);
     /* Redirect to log in GET route */
-        redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
-            json_encode($feedback)));
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',json_encode($feedback)));
 });
 
 /* GET route: Account Overview*/
@@ -144,9 +133,9 @@ $router->get('/account', function () use ($db, $nav, $username) {
         $error_msg = get_error($_GET['error_msg']);
     }
     //$feedback = get_user_info($db, $username);
-
+    $full_name = get_user($db, $username);
     /*Set page content */
-    $page_title = "Account Overview. Hallo $username!";
+    $page_title = "Account Overview. Hallo $full_name !";
     $page_subtitle = "View and edit your account information";
 
     /* Page content */
@@ -164,7 +153,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
 //    $picture = $user_info['profile_picture'];
 
     $submit_btn = "Submit";
-    $navigation = get_navigation($nav, 2);
+    $navigation = get_navigation($nav, 1);
     $form_action = '/DDWT-Eindopdracht/rooms/account';
 
     /* Choose Template */
@@ -194,7 +183,7 @@ $router->get('/register', function () use ($db, $nav) {
     $page_subtitle = "Please fill out the form";
     $page_content = "Register your account";
     $submit_btn = "Submit";
-    $navigation = get_navigation($nav, 4);
+    $navigation = get_navigation($nav, null);
     $form_action = '/DDWT-Eindopdracht/rooms/register';
 
     /* Choose Template */
@@ -227,11 +216,14 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     // }
     // todo: TESTEN if (!check_role()) {}
     $router->get('/', function () use ($db, $nav) {
+        if (isset($_GET['error_msg'])) {
+            $error_msg = get_error($_GET['error_msg']);
+        }
         /* Page content */
         $page_title = "Rooms overview";
         $page_subtitle = "Overview of all the rooms";
         $page_content = get_rooms_table(get_rooms($db));
-        $navigation = get_navigation($nav, 5);
+        $navigation = get_navigation($nav, 3);
 
         /* Choose Template */
         include use_template('main');
@@ -250,7 +242,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
         /* Page info */
         $page_title = sprintf("Information about %s", $room_info['title']);
-        $navigation = get_navigation($nav, 5);
+        $navigation = get_navigation($nav, 3);
 
         /* Page content */
         $title = $room_info['title'];
@@ -280,7 +272,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         $page_subtitle = "Please fill out the form";
         $page_content = "Add your room";
         $submit_btn = "Submit";
-        $navigation = get_navigation($nav, 6);
+        $navigation = get_navigation($nav, 4);
         $form_action = '/DDWT-Eindopdracht/rooms/rooms/add';
 
         /* Choose Template */
@@ -306,7 +298,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         $page_subtitle = "Please fill out the form";
         $page_content = "Edit your room";
         $submit_btn = "Submit";
-        $navigation = get_navigation($nav, 7);
+        $navigation = get_navigation($nav, 5);
         $form_action = '/DDWT-Eindopdracht/rooms/rooms/edit';
 
         /* Choose Template */
