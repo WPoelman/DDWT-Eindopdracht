@@ -30,7 +30,7 @@
 
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
-            <p><?= $page_content ?></p>
+            <p>No account yet? You can <a href="/DDWT-Eindopdracht/rooms/register">register here</a></p>
             <form action="/DDWT-Eindopdracht/rooms/login/" method="POST">
                 <div class="form-group">
                     <label for="inputUsername">Username</label>

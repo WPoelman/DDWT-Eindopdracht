@@ -30,40 +30,57 @@
 
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
-            <p><?= $page_content ?></p>
             <table class="table table-hover">
                 <tr>
                     <th> Name </th>
-                    <th> Sex </th>
-                    <th> E-mail </th>
-                    <th> Phonenumber </th>
-                    <th> Birthdate </th>
-                    <th> Profession </th>
-                    <th> Study </th>
-                    <th> Biography </th>
-                    <th> Profile picture </th>
+                    <td> <?=$name ?> </td>
                 </tr>
                 <tr>
-                    <td> <?=$name ?> </td>
+                    <th> Sex </th>
                     <td> <?=$sex ?> </td>
+                </tr>
+                <tr>
+                    <th> E-mail </th>
                     <td> <?=$email ?> </td>
+                </tr>
+                <tr>
+                    <th> Phonenumber </th>
                     <td> <?=$phone_number ?> </td>
+                </tr>
+                <tr>
+                    <th> Birthdate </th>
                     <td> <?=$birth_date ?> </td>
+                </tr>
+                <tr>
+                    <th> Profession </th>
                     <td> <?=$profession ?> </td>
+                </tr>
+                <tr>
+                    <th> Study </th>
                     <td> <?=$studies ?> </td>
+                </tr>
+                <tr>
+                    <th> Biography </th>
                     <td> <?=$biography ?> </td>
+                </tr>
+                <tr>
+                    <th> Profile picture </th>
                     <td> <?=$picture ?> </td>
                 </tr>
             </table>
+            <button type="edit" class="btn btn-primary">Edit</button>
+            <p>
+                <h5>Your opt-ins</h5>
+            </p>
+
+            <?php get_optins_table($opt_ins)?>
 
             <?php if(isset($left_content)){echo $left_content;} ?>
         </div>
 
         <!-- Right column -->
         <div class="col-md-4">
-
             <?php if(isset($right_column)){echo $right_column;} ?>
-
         </div>
 
     </div>

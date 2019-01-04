@@ -531,7 +531,7 @@ function get_optins($pdo, $username){
 }
 
 /**
- * Makes a table for all the optins of a user
+ * Makes a table for all the opt-ins of a user
  * @param $opt_ins
  * @return string
  */
