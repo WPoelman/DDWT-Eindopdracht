@@ -69,7 +69,7 @@
             <?php if($display_buttons) { ?>
                 <div class="row">
                     <div class="col-sm-2">
-                        <a href="/DDWT-Eindopdracht/rooms/rooms/?room_id=<?= $room_id ?>/edit/" role="button" class="btn btn-warning">Edit</a>
+                        <a href="/DDWT-Eindopdracht/rooms/rooms/edit/?room_id=<?= $room_id ?>" role="button" class="btn btn-warning">Edit</a>
                     </div>
                     <div class="col-sm-2">
                         <form action="/DDWT-Eindopdracht/rooms/rooms/remove/" method="POST">

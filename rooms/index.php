@@ -233,6 +233,9 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         $room_id = $_GET['room_id'];
         $room_info = get_room_details($db, $room_id);
 
+        // todo: display buttons check toevoegen
+        $display_buttons = True;
+
         /* Page info */
         $page_title = sprintf("Information about %s", $room_info['title']);
         $navigation = get_navigation($nav, 3);
@@ -272,7 +275,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         include use_template('add');
     });
 
-    /* GET route: Add Room */
+    /* POST route: Add Room */
     $router->post('/add', function () use ($db, $username) {
         /* Add room to database */
         // todo: TESTEN if (check_role()) {
@@ -284,9 +287,13 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     });
 
     /* GET route: Edit Room */
-    $router->get('/edit/(\d+)', function () use ($db, $nav, $username) {
+    $router->get('/edit', function () use ($db, $nav, $username) {
         /*Set page content */
         // todo: TESTEN if (check_role()){
+        /* Retrieve existing room info */
+        $room_id = $_GET['room_id'];
+        $room_info = get_room_details($db, $room_id);
+
         $page_title = "Edit a room";
         $page_subtitle = "Please fill out the form";
         $page_content = "Edit your room";
@@ -300,12 +307,12 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* POST route: Edit Room */
     $router->post('/edit', function () use ($db, $username) {
-        /* Edit room */
-
         // todo: TESTEN if (check_role()){
-        $feedback = edit_room($db, $_POST, $username);
+        /* Edit room */
+        $room_id = $_POST['room_id'];
+        $room_info_old = get_room_details($db, $room_id);
+        $feedback = edit_room($db, $_POST, $room_info_old, $username);
 
-        // todo misschien andere redirect, even testen wat fijn werkt als gebruiker
         /* Redirect to rooms overview GET route */
         redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
             json_encode($feedback)));

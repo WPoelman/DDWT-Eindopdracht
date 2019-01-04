@@ -82,7 +82,6 @@ function get_navigation($template, $active_id){
  * @param $pdo
  * @return array
  */
-
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM room');
     $stmt->execute();
@@ -397,6 +396,7 @@ function add_room($pdo, $room_info, $username)
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted == 1) {
+        /* Add room to room table */
         $stmt2 = $pdo->prepare("INSERT INTO room (owner, title, size, picture, price, description, type, zip_code, number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt2->execute([
             $username,
@@ -425,6 +425,87 @@ function add_room($pdo, $room_info, $username)
         return [
             'type' => 'danger',
             'message' => 'There was an error. The room was not added to the address table. Try it again.'
+        ];
+    }
+}
+
+/**
+ * Updates a room in the database using post array
+ * @param object $pdo db object
+ * @param array $room_info post array
+ * @param array $room_info_old old room info to look up the address
+ * @param integer $username username from the session info
+ * @return array
+ */
+function edit_room($pdo, $room_info, $room_info_old, $username)
+{
+    /* Check if the user is allowed to edit the room */
+    if ($room_info['owner'] = !$username) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You are not allowed to edit this room.'];
+    }
+
+    /* Check if all required fields are set */
+    if (
+        empty($room_info['title']) or
+        empty($room_info['size']) or
+        empty($room_info['price']) or
+        empty($room_info['type']) or
+        empty($room_info['zip_code']) or
+        empty($room_info['number'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. Not all required fields were filled in.'
+        ];
+    }
+
+    /* Check data type */
+    if (!is_numeric($room_info['size']) and !is_numeric($room_info['price'])) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You should enter a number in the size and price fields.'
+        ];
+    }
+
+    /* Update address table*/
+    $stmt = $pdo->prepare("UPDATE room_address SET zip_code = ?, number = ?, street = ?, city = ? WHERE zip_code = ? AND number = ?");
+    $stmt->execute([
+        $room_info['zip_code'],
+        $room_info['number'],
+        $room_info['street'],
+        $room_info['city'],
+        $room_info_old['zip_code'],
+        $room_info_old['number']
+    ]);
+
+    /* Update room table */
+    $stmt2 = $pdo->prepare("UPDATE room SET title = ?, size = ?, picture = ?, price = ?, description = ?, type = ?, zip_code = ?, number = ? WHERE id = ?");
+    $stmt2->execute([
+        $room_info['title'],
+        $room_info['size'],
+        $room_info['picture'],
+        $room_info['price'],
+        $room_info['description'],
+        $room_info['type'],
+        $room_info['zip_code'],
+        $room_info['number'],
+        $room_info['room_id']
+    ]);
+
+    /* Check if it worked */
+    $updated_1 = $stmt->rowCount();
+    $updated_2 = $stmt2->rowCount();
+    if (($updated_1 == 1) or ($updated_2 == 1)) {
+        return [
+            'type' => 'success',
+            'message' => 'Room is successfully edited!'
+        ];
+    } else {
+        return [
+            'type' => 'warning',
+            'message' => 'No changes detected or something went wrong. Please try again.'
         ];
     }
 }
