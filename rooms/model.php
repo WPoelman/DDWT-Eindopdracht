@@ -283,10 +283,6 @@ function get_user($pdo, $username){
  */
 // TODO: fix the error invalid foreach() row 268 This happens because the username is not set.
 function get_user_info($pdo, $username){
-    // TODO: REMOVE THIS LINE
-    $username = "Marieke";
-    //
-
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
     $stmt->execute([$username]);
     $user_info = $stmt->fetch();

@@ -140,7 +140,6 @@ $router->get('/account', function () use ($db, $nav, $username) {
 
     /* Page content */
     $page_content = "Your info";
-    // todo: account view
     $name = $user_info['username'];
     $sex = $user_info['sex'];
     $email = $user_info['e_mail'];
