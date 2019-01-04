@@ -541,18 +541,16 @@ function get_optins_table($opt_ins){
         <table class = "table table-hover">
         <thead>
         <tr>
-            <th scope="col" class="col-sm-8"> Title </th>
-            <th scope="col" class="col-sm-1"> Size </th>
-            <th scope="col" class="col-sm-1"> Price </th>
-            <th scope="col" class="col-sm-2"> Photo </th>
+            <th scope="col" class="col-sm-8"> Message </th>
+            <th scope="col" class="col-sm-1"> Room </th>
         </tr>
         </thead>
         <tbody>';
     foreach($opt_ins as $key => $value){
         $table_exp .= '
         <tr>
-            <th scope="row">'.$value['message'].'</th>
-            <th scope="row">'.$value['id'].'</th>
+            <td scope="row">'.$value['message'].'</td>
+            <td scope="row">'.$value['id'].'</td>
             <td><a href="" role="button" class="btn btn-primary">Delete</a></td>
         </tr>
         ';

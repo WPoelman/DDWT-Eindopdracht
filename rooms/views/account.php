@@ -72,8 +72,13 @@
             <p>
                 <h5>Your opt-ins</h5>
             </p>
-
-            <?php get_optins_table($opt_ins)?>
+            <?php if(isset($optins[0]["message"])){
+                echo $optins_table;
+            }
+            else {
+                echo "You have no opt-ins.";
+            }
+                ?>
 
             <?php if(isset($left_content)){echo $left_content;} ?>
         </div>

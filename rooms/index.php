@@ -130,6 +130,8 @@ $router->get('/account', function () use ($db, $nav, $username) {
 
     $user_info = get_user_info($db, $username);
     $full_name = get_fullname($db, $username);
+    $optins = get_optins($db, $username);
+    $optins_table = get_optins_table($optins);
     /*Set page content */
     $page_title = "Account overview. Hello $full_name!";
     $page_subtitle = "View and edit your account information";
