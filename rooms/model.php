@@ -165,7 +165,6 @@ function get_room_details($pdo, $room_id){
  * @return bool current user id or False if not logged in
  */
 function get_username(){
-    session_start();
     if (isset($_SESSION['username'])){
         return $_SESSION['username'];
     } else {
@@ -191,7 +190,6 @@ function check_login(){
  * @return String role or none if not set
  */
  function get_user_role(){
-  session_start();
   if (isset($_SESSION['role'])) {
      return $_SESSION['role'];
   } else {

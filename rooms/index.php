@@ -143,7 +143,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
     // todo: account view
     $name = $user_info['username'];
     $sex = $user_info['sex'];
-    $email = $user_info['e-mail'];
+    $email = $user_info['e_mail'];
     $phone_number = $user_info['phone_number'];
     $birth_date = $user_info['birth_date'];
     $role = $user_info['role'];
