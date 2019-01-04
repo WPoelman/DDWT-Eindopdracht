@@ -159,9 +159,16 @@ $router->get('/account', function () use ($db, $nav, $username) {
 
 /* POST route: Edit Account */
 $router->post('/account', function () use ($db, $username) {
-    /* Try to edit account */
-    /* todo Hier functie die probeert account info ophaalt en laat updaten -> update_series() :) */
-    $feedback = edit_user($db, $_POST, $username);
+
+    //See if a user edits his profile or deletes a optin
+    //TODO Add a real check in the if below. Something like a parameter in the POST , see elseif
+    if(false){
+        /* Try to edit account */
+        /* todo Hier functie die probeert account info ophaalt en laat updaten -> update_series() :) */
+        $feedback = edit_user($db, $_POST, $username);
+    } elseif(isset($_POST["room"])){
+        $feedback = remove_optin($db, $_POST["room"], $username);
+    }
 
     /* Redirect to account GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s',

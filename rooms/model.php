@@ -532,9 +532,9 @@ function get_optins($pdo, $username){
 }
 
 /**
- * Makes a table for all the opt-ins of a user
+ * Makes a table for all given opt-ins
  * @param $opt_ins
- * @return string
+ * @return string table
  */
 function get_optins_table($opt_ins){
     $table_exp = '
@@ -551,8 +551,14 @@ function get_optins_table($opt_ins){
         <tr>
             <td scope="row">'.$value['message'].'</td>
             <td scope="row">'.$value['id'].'</td>
-            <td><a href="" role="button" class="btn btn-primary">Delete</a></td>
-        </tr>
+            <td><form action="/DDWT-Eindopdracht/rooms/account" method="post">
+    <a href="/DDWT-Eindopdracht/rooms/account"></a>
+    <input type="hidden" name="room" value='.$value['id'].'/>
+        <button type="submit" class="btn btn-primary"> Delete </button>
+
+</form>
+
+            </tr>
         ';
     }
     $table_exp .= '
@@ -561,13 +567,46 @@ function get_optins_table($opt_ins){
     ';
     return $table_exp;
 }
+/**
+ * Removes an optin
+ * @param object $pdo db object
+ * @param int $id of room
+ * @param string $username username of the owner
+ * @return array message
+ */
+function remove_optin($pdo, $id, $username)
+{
+    session_start();
+    /* Check if the user is allowed to delete the optin */
+    if ($_SESSION['username'] =! $username){
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. You are not allowed to remove this room.'];
+    }
+
+    /* Delete room */
+    $stmt = $pdo->prepare("DELETE FROM opt_in WHERE id = ? AND username = ?");
+    $stmt->execute([$id, $username]);
+    $deleted = $stmt->rowCount();
+    if ($deleted == 1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Opt-in was successfully removed")
+        ];
+    } else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. The opt-in was not removed.'
+        ];
+    }
+}
 
 /**
  * Removes a room with a specific room_id
  * @param object $pdo db object
  * @param int $room_id id of the to be deleted room
  * @param string $username username of the owner
- * @return array
+ * @return array message
  */
 function remove_room($pdo, $room_id, $username)
 {
@@ -600,7 +639,7 @@ function remove_room($pdo, $room_id, $username)
 
 /**
  * Destroys a session of a user
- * @return array
+ * @return array message
  */
 function logout_user() {
     session_start();
@@ -636,9 +675,10 @@ function get_error($feedback)
  * Changes the HTTP Header to a given location
  * @param string $location location to be redirected to
  */
+//TODO Session removed after redirect.
 function redirect($location)
 {
     header(sprintf('Location: %s', $location));
-    die();
+    exit();
 }
 
