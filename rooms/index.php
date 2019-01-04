@@ -1,8 +1,7 @@
 <?php
 /**
  * Controller
- * User: reinardvandalen
- * Date: 05-11-18
+ * Date: 05-12-2018
  * Time: 15:25
  */
 
