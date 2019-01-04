@@ -177,7 +177,6 @@ function get_username(){
  * Checks if user is logged in
  * @return bool
  */
-
 function check_login(){
     session_start();
     if (isset($_SESSION['user_id'])) {
@@ -187,14 +186,18 @@ function check_login(){
     }
 }
 
-/** TODO: TEST
- * function get_user_role(){
- * session_start();
- * if ($_SESSION['role'])) {
- *    return True
- * } else {
- *   return False
+/**
+ * Gives the users role
+ * @return String role or none if not set
  */
+ function get_user_role(){
+  session_start();
+  if (isset($_SESSION['role'])) {
+     return $_SESSION['role'];
+  } else {
+      return 'none';
+ }
+}
 
 /**
  * Register new users and assign the values to database
@@ -277,22 +280,26 @@ function get_user($pdo, $username){
 
 }
 
-///** Getting user info
-// *
-// */
-//// TODO: fix the error invalid foreach() row 268
-//function get_user_info($pdo, $username){
-//    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
-//    $stmt->execute([$username]);
-//    $user_info = $stmt->fetch();
-//    $user_info_exp = Array();
-//
-//    /* Create array with htmlspecialchars */
-//    foreach ($user_info as $key => $value) {
-//        $user_info_exp[$key] = htmlspecialchars($value);
-//    }
-//    return $user_info_exp;
-//}
+/** Getting user info
+ *
+ */
+// TODO: fix the error invalid foreach() row 268 This happens because the username is not set.
+function get_user_info($pdo, $username){
+    // TODO: REMOVE THIS LINE
+    $username = "Marieke";
+    //
+    
+    $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
+    $stmt->execute([$username]);
+    $user_info = $stmt->fetch();
+    $user_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($user_info as $key => $value) {
+        $user_info_exp[$key] = htmlspecialchars($value);
+    }
+    return $user_info_exp;
+}
 
 
 

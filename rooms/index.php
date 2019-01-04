@@ -132,7 +132,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
     }
-    //$feedback = get_user_info($db, $username);
+    $feedback = get_user_info($db, $username);
     $full_name = get_user($db, $username);
     /*Set page content */
     $page_title = "Account Overview. Hallo $full_name !";
