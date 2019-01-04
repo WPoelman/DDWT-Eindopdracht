@@ -132,6 +132,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
     }
+
     $user_info = get_user_info($db, $username);
     $full_name = get_user($db, $username);
     /*Set page content */

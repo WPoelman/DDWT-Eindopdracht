@@ -165,6 +165,8 @@ function get_room_details($pdo, $room_id){
  * @return bool current user id or False if not logged in
  */
 function get_username(){
+    //TODO: If check_login() is in index: remove session_start()
+    session_start();
     if (isset($_SESSION['username'])){
         return $_SESSION['username'];
     } else {
@@ -281,7 +283,6 @@ function get_user($pdo, $username){
 /** Getting user info
  *
  */
-// TODO: fix the error invalid foreach() row 268 This happens because the username is not set.
 function get_user_info($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
     $stmt->execute([$username]);
