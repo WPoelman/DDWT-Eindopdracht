@@ -288,7 +288,7 @@ function get_user_info($pdo, $username){
     // TODO: REMOVE THIS LINE
     $username = "Marieke";
     //
-    
+
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
     $stmt->execute([$username]);
     $user_info = $stmt->fetch();

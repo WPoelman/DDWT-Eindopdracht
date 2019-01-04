@@ -132,25 +132,25 @@ $router->get('/account', function () use ($db, $nav, $username) {
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
     }
-    $feedback = get_user_info($db, $username);
+    $user_info = get_user_info($db, $username);
     $full_name = get_user($db, $username);
     /*Set page content */
-    $page_title = "Account Overview. Hallo $full_name !";
+    $page_title = "Account Overview. Hello $full_name !";
     $page_subtitle = "View and edit your account information";
 
     /* Page content */
-    $page_content = "Page content here";
+    $page_content = "Your info";
     // todo: account view
-//    $name = $user_info['username'];
-//    $sex = $user_info['sex'];
-//    $email = $user_info['e_mail'];
-//    $phone_number = $user_info['phone_number'];
-//    $birth_date = $user_info['birth_date'];
-//    $role = $user_info['role'];
-//    $profession = $user_info['profession'];
-//    $studies = $user_info['studies'];
-//    $biography = $user_info['biography'];
-//    $picture = $user_info['profile_picture'];
+    $name = $user_info['username'];
+    $sex = $user_info['sex'];
+    $email = $user_info['e-mail'];
+    $phone_number = $user_info['phone_number'];
+    $birth_date = $user_info['birth_date'];
+    $role = $user_info['role'];
+    $profession = $user_info['profession'];
+    $studies = $user_info['studies'];
+    $biography = $user_info['biography'];
+    $picture = $user_info['profile_picture'];
 
     $submit_btn = "Submit";
     $navigation = get_navigation($nav, 1);

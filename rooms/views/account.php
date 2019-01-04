@@ -31,6 +31,31 @@
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <p><?= $page_content ?></p>
+            <table class="table table-hover">
+                <tr>
+                    <th> Name </th>
+                    <th> Sex </th>
+                    <th> E-mail </th>
+                    <th> Phonenumber </th>
+                    <th> Birthdate </th>
+                    <th> Profession </th>
+                    <th> Study </th>
+                    <th> Biography </th>
+                    <th> Profile picture </th>
+                </tr>
+                <tr>
+                    <td> <?=$name ?> </td>
+                    <td> <?=$sex ?> </td>
+                    <td> <?=$email ?> </td>
+                    <td> <?=$phone_number ?> </td>
+                    <td> <?=$birth_date ?> </td>
+                    <td> <?=$profession ?> </td>
+                    <td> <?=$studies ?> </td>
+                    <td> <?=$biography ?> </td>
+                    <td> <?=$picture ?> </td>
+                </tr>
+            </table>
+
             <?php if(isset($left_content)){echo $left_content;} ?>
         </div>
 
