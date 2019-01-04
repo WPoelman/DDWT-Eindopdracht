@@ -16,11 +16,8 @@ include 'model.php';
 $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 /* Credentials */
-// TODO: Room id veranderen test variables weghalen
-
 $username = get_username();
 $role = get_user_role();
-//$user_info = get_user_info($db, $username);
 
 /* Set the default routes for the navigation bar */
 $nav = Array(
@@ -123,18 +120,17 @@ $router->post('/login', function () use ($db){
 /* GET route: Account Overview*/
 
 $router->get('/account', function () use ($db, $nav, $username) {
-    // todo: check if logged in:
-    // if (!check_login()) {
-    //  redirect('/DDWT-Eindopdracht/rooms/login/');
-    // }
-    //$username = $_SESSION['username'];
+
+     if (!check_login()) {
+         redirect('/DDWT-Eindopdracht/rooms/login/');
+     }
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
     }
 
     $user_info = get_user_info($db, $username);
-    $full_name = get_user($db, $username);
+    $full_name = get_fullname($db, $username);
     /*Set page content */
     $page_title = "Account Overview. Hello $full_name !";
     $page_subtitle = "View and edit your account information";
@@ -173,6 +169,10 @@ $router->post('/account', function () use ($db, $username) {
 
 /* GET route: Register */
 $router->get('/register', function () use ($db, $nav) {
+     if (check_login()) {
+        redirect('/DDWT-Eindopdracht/rooms');
+     }
+
     /* Get error msg from POST route */
     if (isset($_GET['feedback'])) {
         $feedback = get_error($_GET['feedback']);
@@ -195,11 +195,6 @@ $router->post('/register', function () use ($db) {
     /* Try to register user */
     $feedback = register_user($db, $_POST);
 
-    // todo er komt een check in register get die deze redirect naar de homepage,
-    // todo dus user registered = user ingelogd dus naar homepage
-    // todo TESTEN
-    // if (check_login()) {
-    //    redirect('/DDWT-Eindopdracht/rooms');
 
     /* Redirect to register GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/register/?error_msg=%s',
@@ -210,11 +205,7 @@ $router->post('/register', function () use ($db) {
 $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: All Rooms Overview */
-    // todo: TESTEN
-    // if (!check_login() {
-    // redirect ('DDWT-Eindopdracht/rooms/login');
-    // }
-    // todo: TESTEN if (!check_role()) {}
+
     $router->get('/', function () use ($db, $nav) {
         if (isset($_GET['error_msg'])) {
             $error_msg = get_error($_GET['error_msg']);
@@ -230,13 +221,16 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     });
 
     /* GET route: View Single Room */
-    $router->get('/(\d+)', function () use ($db, $nav) {
+    $router->get('/room/', function () use ($db, $nav) {
+        if (!check_login()) {
+            redirect('/DDWT-Eindopdracht/rooms/login/');
+        }
         // todo: check if logged in user is the same as editor
         // todo: TEST
         // $display_buttons = False;
         // if ($_SESSION['username'] == $room_info['owner']) {
         //   $display_buttons = True;
-
+        //}
         $room_id = $_GET['room_id'];
         $room_info = get_room_details($db, $room_id);
 
@@ -319,16 +313,17 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     });
 
     /* DELETE route: Delete Room */
-    $router->delete('/(\d+)', function($id) use($db, $nav, $username) {
+    //TODO: change $id to $room_id
+    $router->delete('/', function($room_id) use($db, $nav, $username) {
         /* Try to delete room */
         // todo: if (check_role()){
-        $room_info = get_room_details($db, $id);
+        $room_info = get_room_details($db, $room_id);
         $username = $room_info['owner'];
         //todo check if username from db is same as session username
         //$display_buttons = False;
         // if ($_SESSION['username']) == $room_info['owner']){
         //   $display_buttons = True;
-        $feedback = remove_room($db, $id, $username);
+        $feedback = remove_room($db, $room_id, $username);
 
         /* Redirect to rooms overview GET route */
         redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',

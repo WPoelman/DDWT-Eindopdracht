@@ -126,7 +126,7 @@ function get_rooms_table($rooms){
             <th scope="row">'.$value['size'].'</th>
             <th scope="row">'.$value['price'].'</th>
             <th scope="row"><img src="'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
-            <td><a href="/DDWT-Eindopdracht/rooms/rooms/?room_id='.$value['id'].'" role="button" class="btn btn-primary">Show details</a></td>
+            <td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-primary">Show details</a></td>
         </tr>
         ';
          }
@@ -165,7 +165,6 @@ function get_room_details($pdo, $room_id){
  * @return bool current user id or False if not logged in
  */
 function get_username(){
-    //TODO: If check_login() is in index: remove session_start()
     session_start();
     if (isset($_SESSION['username'])){
         return $_SESSION['username'];
@@ -179,8 +178,7 @@ function get_username(){
  * @return bool
  */
 function check_login(){
-    session_start();
-    if (isset($_SESSION['user_id'])) {
+    if (isset($_SESSION['username'])) {
         return True;
     } else {
         return False;
@@ -262,7 +260,7 @@ function register_user($pdo, $form_data){
     $_SESSION['username'] = $form_data['username'];
     $feedback = [
         'type' => 'success',
-        'message' => sprintf('%s, your account was successfully created!', get_user($pdo, $_SESSION['username']))
+        'message' => sprintf('%s, your account was successfully created!', get_fullname($pdo, $_SESSION['username']))
     ];
     redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
 }
@@ -272,7 +270,7 @@ function register_user($pdo, $form_data){
  * @param $ID
  * @return array
  */
-function get_user($pdo, $username){
+function get_fullname($pdo, $username){
     $stmt = $pdo->prepare('SELECT first_name, last_name FROM user where username = ?');
     $stmt->execute([$username]);
     $user_name = $stmt->fetch();
@@ -280,8 +278,10 @@ function get_user($pdo, $username){
 
 }
 
-/** Getting user info
- *
+/**
+ * @param $pdo
+ * @param $username
+ * @return array
  */
 function get_user_info($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
@@ -348,7 +348,7 @@ function log_in($pdo, $form_data){
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',
-                get_user($pdo, $_SESSION['username']))
+                get_fullname($pdo, $_SESSION['username']))
         ];
         redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s',
             json_encode($feedback)));
@@ -386,8 +386,6 @@ function add_room($pdo, $room_info, $username)
             'message' => 'There was an error. You should enter a number in the size and price fields.'
         ];
     }
-
-    /* niet zeker hier, hoe checken we of de room al bestaat? id wordt pas later toegevoegd
 
     /* Add to room_adress */
     $stmt = $pdo->prepare("INSERT INTO room_address (zip_code, number, street, city) VALUES (?, ?, ?, ?)");
