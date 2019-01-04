@@ -65,7 +65,7 @@
                 </tr>
                 <tr>
                     <th> Profile picture </th>
-                    <td> <?=$picture ?> </td>
+                    <td> <img src="data:image/jpg;base64,<?php echo base64_encode( $picture ); ?>" /></td>
                 </tr>
             </table>
             <button type="edit" class="btn btn-primary">Edit</button>

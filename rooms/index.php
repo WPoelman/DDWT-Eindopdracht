@@ -99,7 +99,7 @@ $router->get('/login', function () use ($db, $nav){
     }
 
     /*Set page content */
-    $page_title = "Log In";
+    $page_title = "Log in";
     $page_subtitle = "Log in with your username and password.";
     $page_content = "No account yet? You can register.";
     $navigation = get_navigation($nav, 1);

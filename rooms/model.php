@@ -16,7 +16,7 @@ error_reporting(E_ALL);
  * @param string $db database name
  * @param string $user database user
  * @param string $pass database password
- * @return pdo object
+ * @return object $pdo
  */
 function connect_db($host, $db, $user, $pass){
     $charset = 'utf8mb4';
@@ -104,7 +104,7 @@ function get_rooms($pdo){
 
 /** Make room overview table
  * @param $rooms
- * @return $table_exp
+ * @return string $table_exp
  */
 function get_rooms_table($rooms){
     $table_exp = '
@@ -202,7 +202,6 @@ function check_login(){
  * @param $form_data
  * @return array
  */
-
 function register_user($pdo, $form_data){
     /* Check if there are no empty values */
     if (
@@ -244,6 +243,7 @@ function register_user($pdo, $form_data){
 
     /* Save user to database */
     try {
+        // TODO: foto uploaden werkt niet op deze manier, zo slaat ie alleen de naam op van de foto
         $stmt = $pdo->prepare('INSERT INTO user (username, password, first_name, last_name, birth_date, sex, e_mail, role, phone_number, studies, profession, biography, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
         $stmt->execute([$form_data['username'], $password, $form_data['first_name'], $form_data['last_name'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
         /* $username = $pdo -> lastinstertid(); */
@@ -265,8 +265,9 @@ function register_user($pdo, $form_data){
 }
 
 /**
+ * Get full name of users
  * @param $pdo
- * @param $ID
+ * @param $username
  * @return array
  */
 function get_fullname($pdo, $username){
@@ -274,10 +275,10 @@ function get_fullname($pdo, $username){
     $stmt->execute([$username]);
     $user_name = $stmt->fetch();
     return sprintf("%s %s", htmlspecialchars($user_name['first_name']), htmlspecialchars($user_name['last_name']));
-
 }
 
 /**
+ * Gets all info from users
  * @param $pdo
  * @param $username
  * @return array
@@ -511,7 +512,7 @@ function edit_room($pdo, $room_info, $room_info_old, $username)
 }
 
 /**
- * Get all the optins of a specific user
+ * Get all the opt-ins of a specific user
  * @param $pdo
  * @param $username
  * @return array
@@ -562,7 +563,6 @@ function get_optins_table($opt_ins){
     ';
     return $table_exp;
 }
-
 
 /**
  * Removes a room with a specific room_id
