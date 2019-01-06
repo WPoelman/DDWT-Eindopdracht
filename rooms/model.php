@@ -355,6 +355,37 @@ function log_in($pdo, $form_data){
     }
 }
 
+function add_optin($pdo, $optin_info){
+    if (
+        empty($optin_info['username']) or
+        empty($optin_info['id'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error.'
+        ];
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO opt_in (message, username, id) VALUES (?, ?, ?)");
+    $stmt->execute([
+        $optin_info['message'],
+        $optin_info['username'],
+        $optin_info['id']
+    ]);
+    $inserted = $stmt->rowCount();
+    if ($inserted == 1) {
+        return [
+            'type' => 'success',
+            'message' => 'You have send a message!'
+        ];
+    } else {
+        return [
+            'type' => 'danger',
+            'message' => 'There was an error. The message was not send. Try it again.'
+        ];
+    }
+}
+
 /**
  * Add room to the database
  * @param object $pdo db object

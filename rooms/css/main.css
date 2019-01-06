@@ -2,6 +2,14 @@
     padding: 15px 0 0 0;
 }
 
+.card-body h2{
+    margin: 0;
+}
+
+.card-body .count {
+    margin: 0;
+}
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;

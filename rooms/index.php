@@ -114,6 +114,16 @@ $router->get('/login', function () use ($db, $nav){
     include use_template('login');
 });
 
+/* POST route: Opt In*/
+$router->post('/optin', function () use ($db){
+    /* Try to login */
+    $feedback = add_optin($db, $_POST);
+    /* Redirect to log in GET route */
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',json_encode($feedback)));
+});
+
+
+
 /* POST route: Log In */
 $router->post('/login', function () use ($db){
     /* Try to login */
@@ -236,7 +246,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     });
 
     /* GET route: View Single Room */
-    $router->get('/room/', function () use ($db, $nav) {
+    $router->get('/room/', function () use ($db, $nav, $username) {
         if (!check_login()) {
             redirect('/DDWT-Eindopdracht/rooms/login/');
         }
@@ -255,6 +265,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         /* Page info */
         $page_title = sprintf("Information about %s", $room_info['title']);
         $navigation = get_navigation($nav, 3);
+        $right_column = use_template('optin');
 
         /* Page content */
         $title = $room_info['title'];

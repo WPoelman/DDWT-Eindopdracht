@@ -80,6 +80,13 @@
                 </div>
             <?php }?>
         </div>
+        <div class="col-md-4">
+
+            <?php if(isset($right_column)){
+                include $right_column;
+            } ?>
+
+        </div>
 
 
     </div>
