@@ -67,7 +67,11 @@ $router->get('/', function () use ($nav) {
     $page_subtitle = "Not related to new kids.";
     $page_content = "See nice rooms, meet new owners.";
     $navigation = get_navigation($nav, 0);
-    $login = "You don't have an account? ";
+    if (check_login()) {
+        $login_button = False;
+    } else {$login_button = "You don't have an account? ";
+    }
+
 
     /* Choose Template */
     include use_template('main');
@@ -85,6 +89,7 @@ $router->get('/contact', function () use ($nav) {
     $page_content = "To contact us, mail wessel@roomturbo.nl";
     $logo = "/DDWT-Eindopdracht/rooms/images/logo.png";
     $navigation = get_navigation($nav, 2);
+    $login_button = False;
 
     /* Choose Template */
     include use_template('main');
@@ -224,6 +229,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         $page_subtitle = "Overview of all the rooms";
         $page_content = get_rooms_table(get_rooms($db));
         $navigation = get_navigation($nav, 3);
+        $login_button = False;
 
         /* Choose Template */
         include use_template('main');

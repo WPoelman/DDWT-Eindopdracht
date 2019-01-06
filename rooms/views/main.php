@@ -34,9 +34,9 @@
             <?php endif; ?>
 
             <p><?= $page_content ?></p>
-            <?php if(isset($login)) : ?>
+            <?php if($login_button) : ?>
                 <a href="/DDWT-Eindopdracht/rooms/login" role="button" class="btn btn-info">Login</a><br><br>
-                <?php echo $login; ?><a href="/DDWT-Eindopdracht/rooms/register">Register here</a>
+                <?php echo $login_button; ?><a href="/DDWT-Eindopdracht/rooms/register">Register here</a>
             <?php endif; ?>
         </div>
     </div>
