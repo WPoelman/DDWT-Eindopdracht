@@ -126,7 +126,7 @@
                                                       value="<?php echo $room_id ?>"><?php } ?>
                 <div class="form-group row">
                     <div class="col-sm-10">
-                        <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>
+                        <button type="submit" class="btn btn-info"><?= $submit_btn ?></button>
                     </div>
                 </div>
             </form>

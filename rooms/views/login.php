@@ -40,7 +40,7 @@
                     <label for="inputPassword">Password</label>
                     <input type="password" class="form-control" id="inputPassword" placeholder="Enter password" name="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-info">Login</button>
             </form>
             <?php if(isset($left_content)){echo $left_content;} ?>
         </div>

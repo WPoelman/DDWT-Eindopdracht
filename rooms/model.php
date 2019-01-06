@@ -53,7 +53,7 @@ function use_template($template){
 function get_navigation($template, $active_id){
     $navigation_exp = '
     <nav class="navbar navbar-expand-lg navbar-light bg-info">
-    <a class="navbar-brand">RoomTurbo</a>
+    <a class="navbar-brand"><img src="/DDWT-Eindopdracht/rooms/images/logo.png" height=""50 width="50" ></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
     </button>
@@ -125,7 +125,7 @@ function get_rooms_table($rooms){
             <th scope="row">'.$value['size'].'</th>
             <th scope="row">'.$value['price'].'</th>
             <th scope="row"><img src="'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
-            <td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-primary">Show details</a></td>
+            <td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-info">Show details</a></td>
         </tr>
         ';
          }

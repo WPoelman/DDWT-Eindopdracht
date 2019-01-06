@@ -80,9 +80,10 @@ $router->get('/logout', function () {
 /* GET route: Contact Page */
 $router->get('/contact', function () use ($nav) {
     /*Set page content */
-    $page_title = "Contact info";
+    $page_title = "Contact info RoomTurbo";
     $page_subtitle = "Contact us";
     $page_content = "To contact us, mail wessel@roomturbo.nl";
+    $logo = "/DDWT-Eindopdracht/rooms/images/logo.png";
     $navigation = get_navigation($nav, 2);
 
     /* Choose Template */

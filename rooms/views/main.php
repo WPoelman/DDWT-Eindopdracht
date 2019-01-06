@@ -29,9 +29,13 @@
 
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
+            <?php if (isset($logo)) :?>
+                <img src="<?php echo $logo ?> " >
+            <?php endif; ?>
+
             <p><?= $page_content ?></p>
             <?php if(isset($login)) : ?>
-                <a href="/DDWT-Eindopdracht/rooms/login" role="button" class="btn btn-primary">Login</a><br><br>
+                <a href="/DDWT-Eindopdracht/rooms/login" role="button" class="btn btn-info">Login</a><br><br>
                 <?php echo $login; ?><a href="/DDWT-Eindopdracht/rooms/register">Register here</a>
             <?php endif; ?>
         </div>

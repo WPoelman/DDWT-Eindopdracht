@@ -68,7 +68,7 @@
                     <td> <img src="data:image/jpg;base64,<?php echo base64_encode( $picture ); ?>" /></td>
                 </tr>
             </table>
-            <button type="edit" class="btn btn-primary">Edit</button>
+            <button type="edit" class="btn btn-info">Edit</button>
             <p>
                 <h5>Your opt-ins</h5>
             </p>
