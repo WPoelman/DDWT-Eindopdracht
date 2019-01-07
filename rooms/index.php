@@ -174,6 +174,25 @@ $router->get('/account', function () use ($db, $nav, $username) {
     include use_template('account');
 });
 
+/* GET route: Edit account */
+$router->get('/account/edit', function() use ($nav, $db, $username){
+    if (isset($_GET['feedback'])) {
+        $feedback = get_error($_GET['feedback']);
+    }
+    $user_info = get_user_info($db, $username);
+    $full_name = get_fullname($db, $username);
+    /*Set page content */
+    $page_title = "Edit your Account";
+    $page_subtitle = "$full_name";
+    $page_content = "Edit the information below";
+    $submit_btn = "Edit";
+    $navigation = get_navigation($nav, null);
+    $form_action = '/DDWT-Eindopdracht/rooms/account/edit';
+
+    include use_template('register');
+});
+
+
 //    /* POST route: Edit Account */
 //    $router->post('/account', function () use ($db, $username) {
 //        $feedback = edit_user($db, $_POST, $username);
