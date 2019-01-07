@@ -200,6 +200,13 @@ $router->post('/account/edit', function () use ($db, $username){
 
 });
 
+/* POST route: Delete Account */
+$router->post('account/delete', function() use ($db, $username){
+    $feedback = remove_user($db, $username);
+    logout_user();
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
+});
+
 /* GET route: change password */
 $router->get('/change_password', function () use ($nav, $db, $username) {
     $full_name = get_fullname($db, $username);

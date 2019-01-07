@@ -68,7 +68,12 @@
                     <td><img src="images/users/<?=$picture?>"> </td>
                 </tr>
             </table>
+            <p>
             <a href="/DDWT-Eindopdracht/rooms/account/edit" role="button" class="btn btn-info">Edit</a>
+
+            <form action="/DDWT-Eindopdracht/rooms/account/delete" method="POST">
+                <button type="submit" class="btn btn-danger">Delete account</button>
+            </form></p>
             <p>
             <br>
                 <h5>Your opt-ins</h5>

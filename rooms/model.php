@@ -810,6 +810,32 @@ function get_optins_table($opt_ins){
     ';
     return $table_exp;
 }
+
+/**
+ * Removes a user account
+ * @param $pdo
+ * @param $username
+ * @return array
+ */
+function remove_user($pdo, $username){
+    /* Delete room */
+    $stmt = $pdo->prepare("DELETE FROM user WHERE username = ?");
+    $stmt->execute([$username]);
+    $deleted = $stmt->rowCount();
+    if ($deleted == 1) {
+        return [
+            'type' => 'success',
+            'message' => sprintf("Your account was successfully removed")
+        ];
+    } else {
+        return [
+            'type' => 'warning',
+            'message' => 'An error occurred. Your account was not removed.'
+        ];
+    }
+
+}
+
 /**
  * Removes an optin
  * @param object $pdo db object
