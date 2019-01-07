@@ -214,8 +214,7 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user */
-    $feedback = register_user($db, $_POST);
-
+    $feedback = register_user($db, $_POST, $_FILES);
 
     /* Redirect to register GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/register/?error_msg=%s',

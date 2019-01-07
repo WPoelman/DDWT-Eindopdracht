@@ -198,11 +198,12 @@ function check_login(){
 
 /**
  * Register new users and assign the values to database
- * @param $pdo
- * @param $form_data
+ * @param $pdo database object
+ * @param $form_data $_POST form data
+ * @param $file $_FILES post data (profile picture)
  * @return array
  */
-function register_user($pdo, $form_data){
+function register_user($pdo, $form_data, $file){
     /* Check if there are no empty values */
     if (
         empty($form_data['username']) or
@@ -241,12 +242,65 @@ function register_user($pdo, $form_data){
     /* Hash password */
     $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
+    /* Save image to the server */
+    if (isset($file)) {
+        $target_dir = "images/users/";
+        $target_file = $target_dir . basename($file["picture"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        /* Check if image file is a actual image or fake image */
+        if($check = getimagesize($file["picture"]["tmp_name"]) == false) {
+            return [
+            'type' => 'danger',
+            'message' => 'The profile picture was not a supported file format!'
+            ];
+        }
+    /* Check if file already exists */
+        if (file_exists($target_file)) {
+            return [
+                'type' => 'danger',
+                'message' => 'The profile picture a;ready exists, try a different name!'
+            ];
+        }
+    /* Check file size */
+        if ($file["picture"]["size"] > 500000) {
+            return [
+                'type' => 'danger',
+                'message' => 'The profile picture is too big!'
+            ];
+        }
+    /* Allow certain file formats */
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+            && $imageFileType != "gif" ) {
+            return [
+                'type' => 'danger',
+                'message' => 'Only jpg, jpeg, png and gif files are allowed as profile picture. '
+            ];
+        }
+    /* if everything is ok, try to upload file */
+        $target_dir = "images/users/";
+        $target_file = $target_dir . basename($file["picture"]["name"]);
+        move_uploaded_file($file["picture"]["tmp_name"], $target_file);
+    }
+
     /* Save user to database */
     try {
-        // TODO: foto uploaden werkt niet op deze manier, zo slaat ie alleen de naam op van de foto
         $stmt = $pdo->prepare('INSERT INTO user (username, password, first_name, last_name, birth_date, sex, e_mail, role, phone_number, studies, profession, biography, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([$form_data['username'], $password, $form_data['first_name'], $form_data['last_name'], $form_data['birthdate'], $form_data['sex'], $form_data['email'], $form_data['role'], $form_data['phonenumber'], $form_data['studies'], $form_data['profession'], $form_data['biography'], $form_data['picture']]);
-        /* $username = $pdo -> lastinstertid(); */
+        $stmt->execute([
+            $form_data['username'],
+            $password,
+            $form_data['first_name'],
+            $form_data['last_name'],
+            $form_data['birthdate'],
+            $form_data['sex'],
+            $form_data['email'],
+            $form_data['role'],
+            $form_data['phonenumber'],
+            $form_data['studies'],
+            $form_data['profession'],
+            $form_data['biography'],
+            basename($file["picture"]["name"])
+        ]);
+
     } catch (PDOException $e) {
         return [
             'type' => 'danger',

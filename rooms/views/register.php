@@ -34,7 +34,7 @@
                     <h1><?= $page_title ?></h1>
                     <h5><?= $page_subtitle ?></h5>
                     <p><?= $page_content ?></p>
-                    <form action="<?= $form_action ?>" method="POST">
+                    <form action="<?= $form_action ?>" method="POST" enctype="multipart/form-data">
 
                     <div class="pd-15">&nbsp;</div>
                         <div class="form-group row">
@@ -114,7 +114,7 @@
                         <div class="form-group row">
                             <label for="picture" class="col-sm-2 col-form-label">Upload a profile picture</label>
                             <div class="col-sm-4">
-                                <input type="file" class="form-control" id="picture" name="picture">
+                                <input type="file" id="picture" name="picture">
                             </div>
                         </div>
                         <button type="submit" name="Submit" class="btn btn-info">Register</button>
