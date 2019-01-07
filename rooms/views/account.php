@@ -68,7 +68,7 @@
                     <td><img src="images/users/<?=$picture?>"> </td>
                 </tr>
             </table>
-            <button type="edit" class="btn btn-info">Edit</button>
+            <a href="/DDWT-Eindopdracht/rooms/account/edit" role="button" class="btn btn-info">Edit</a>
             <p>
             <br>
                 <h5>Your opt-ins</h5>

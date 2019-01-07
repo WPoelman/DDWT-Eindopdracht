@@ -558,6 +558,53 @@ function add_room($pdo, $room_info, $username, $file)
     }
 }
 
+function edit_user($pdo, $form_data, $file, $username){
+    /* check if all required fields are filled in */
+    if (
+        empty($form_data['username']) or
+        empty($form_data['first_name']) or
+        empty($form_data['last_name']) or
+        empty($form_data['birthdate']) or
+        empty($form_data['email'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You should fill in all required fields.'
+        ];
+    }
+
+    $stmt = $pdo->prepare("UPDATE user SET username = ?, first_name = ?, last_name = ?, birth_date = ?, sex = ?, e_mail = ?, role = ?, phone_number = ?, studies = ?, profession = ?, biography = ?, profile_picture = ?  WHERE username = ?");
+    $stmt->execute([
+        $form_data['username'],
+        $form_data['first_name'],
+        $form_data['last_name'],
+        $form_data['birthdate'],
+        $form_data['sex'],
+        $form_data['email'],
+        $form_data['role'],
+        $form_data['phonenumber'],
+        $form_data['studies'],
+        $form_data['profession'],
+        $form_data['biography'],
+        basename($file["picture"]["name"]),
+        $username
+    ]);
+    /* Check if it worked */
+    $updated = $stmt->rowCount();
+    if ($updated == 1) {
+        return [
+            'type' => 'success',
+            'message' => 'Room is successfully edited!'
+        ];
+    } else {
+        return [
+            'type' => 'warning',
+            'message' => 'No changes detected or something went wrong. Please try again.'
+        ];
+    }
+}
+
+
 /**
  * Updates a room in the database using post array
  * @param object $pdo db object
