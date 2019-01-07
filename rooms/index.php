@@ -40,10 +40,6 @@ $nav = Array(
         'name' => 'Add',
         'url' => '/DDWT-Eindopdracht/rooms/rooms/add'
     ),
-    5 => Array(
-        'name' => 'Edit',
-        'url' => '/DDWT-Eindopdracht/rooms/rooms/edit'
-    ),
     6 => Array(
         'name' => 'Logout',
         'url' => '/DDWT-Eindopdracht/rooms/logout'
@@ -76,11 +72,13 @@ $router->get('/', function () use ($nav) {
     /* Choose Template */
     include use_template('main');
 });
+
 /* GET route: Log out*/
 $router->get('/logout', function () {
     $feedback = logout_user();
     redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
 });
+
 /* GET route: Contact Page */
 $router->get('/contact', function () use ($nav) {
     /*Set page content */
@@ -122,8 +120,6 @@ $router->post('/optin', function () use ($db){
     redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',json_encode($feedback)));
 });
 
-
-
 /* POST route: Log In */
 $router->post('/login', function () use ($db){
     /* Try to login */
@@ -133,12 +129,17 @@ $router->post('/login', function () use ($db){
 });
 
 /* GET route: Account Overview*/
-
 $router->get('/account', function () use ($db, $nav, $username) {
 
+    /* Check if the user is logged in */
      if (!check_login()) {
-         redirect('/DDWT-Eindopdracht/rooms/login/');
-     }
+         redirect('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+             json_encode([
+                 'type' => 'danger',
+                 'message' => "You don't have an account yet, please log in or register"
+             ]));
+     };
+
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
@@ -193,9 +194,14 @@ $router->post('/account', function () use ($db, $username) {
 
 /* GET route: Register */
 $router->get('/register', function () use ($db, $nav) {
-     if (check_login()) {
-        redirect('/DDWT-Eindopdracht/rooms');
-     }
+    /* Check if the user is logged in */
+    if (!check_login()) {
+        redirect('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+            json_encode([
+                'type' => 'danger',
+                'message' => "You don't have an account yet, please log in or register"
+            ]));
+    };
 
     /* Get error msg from POST route */
     if (isset($_GET['feedback'])) {
@@ -247,9 +253,14 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: View Single Room */
     $router->get('/room/', function () use ($db, $nav, $username) {
+        /* Check if the user is logged in */
         if (!check_login()) {
-            redirect('/DDWT-Eindopdracht/rooms/login/');
-        }
+            redirect('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+                json_encode([
+                    'type' => 'danger',
+                    'message' => "You don't have an account yet, please log in or register"
+                ]));
+        };
         // todo: check if logged in user is the same as editor
         // todo: TEST
         // $display_buttons = False;
@@ -285,6 +296,15 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->get('/add', function () use ($db, $nav, $username) {
         // todo: TESTEN if (check_role()) {
 
+        /* Check if the user is logged in */
+        if (!check_login()) {
+            redirect('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+                json_encode([
+                    'type' => 'danger',
+                    'message' => "You don't have an account yet, please log in or register"
+                ]));
+        };
+
         /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) {
             $error_msg = get_error($_GET['error_msg']);
@@ -317,6 +337,14 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->get('/edit', function () use ($db, $nav, $username) {
         /*Set page content */
         // todo: TESTEN if (check_role()){
+        /* Check if the user is logged in */
+        if (!check_login()) {
+            redirect('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+                json_encode([
+                    'type' => 'danger',
+                    'message' => "You don't have an account yet, please log in or register"
+                ]));
+        };
         /* Retrieve existing room info */
         $room_id = $_GET['room_id'];
         $room_info = get_room_details($db, $room_id);

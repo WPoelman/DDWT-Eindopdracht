@@ -1,8 +1,8 @@
 <?php
 /**
  * Model
- * Date: 4-12-2018
- * Time: 15:47
+ * User: DDWT-18 Group 12
+ * Date: 21-12-2018
  */
 
 /* Enable error reporting */
