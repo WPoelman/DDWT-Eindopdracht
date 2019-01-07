@@ -582,7 +582,7 @@ function get_optins_table($opt_ins){
         <tr>
             <td scope="row">'.$value['message'].'</td>
             <td scope="row">'.$value['id'].'</td>
-            <td><form action="/DDWT-Eindopdracht/rooms/account" method="post">
+            <td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
     <a href="/DDWT-Eindopdracht/rooms/account"></a>
     <input type="hidden" name="room" value='.$value['id'].'/>
         <button type="submit" class="btn btn-primary"> Delete </button>
@@ -607,14 +607,6 @@ function get_optins_table($opt_ins){
  */
 function remove_optin($pdo, $id, $username)
 {
-    session_start();
-    /* Check if the user is allowed to delete the optin */
-    if ($_SESSION['username'] =! $username){
-        return [
-            'type' => 'danger',
-            'message' => 'There was an error. You are not allowed to remove this room.'];
-    }
-
     /* Delete room */
     $stmt = $pdo->prepare("DELETE FROM opt_in WHERE id = ? AND username = ?");
     $stmt->execute([$id, $username]);

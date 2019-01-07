@@ -70,6 +70,7 @@
             </table>
             <button type="edit" class="btn btn-info">Edit</button>
             <p>
+            <br>
                 <h5>Your opt-ins</h5>
             </p>
             <?php if(isset($optins[0]["message"])){
