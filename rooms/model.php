@@ -477,6 +477,7 @@ function add_room($pdo, $room_info, $username, $file)
 
     /* Save image to the server */
     if ($file != Null) {
+        $image_name = basename($file["picture"]["name"]);
         $target_dir = "images/rooms/";
         $target_file = $target_dir . basename($file["picture"]["name"]);
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -513,6 +514,8 @@ function add_room($pdo, $room_info, $username, $file)
         $target_dir = "images/rooms/";
         $target_file = $target_dir . basename($file["picture"]["name"]);
         move_uploaded_file($file["picture"]["tmp_name"], $target_file);
+    } else {
+        $image_name = Null;
     }
 
     /* Add to room_adress */
@@ -531,7 +534,7 @@ function add_room($pdo, $room_info, $username, $file)
             $username,
             $room_info['title'],
             $room_info['size'],
-            basename($file["picture"]["name"]),
+            $image_name,
             $room_info['price'],
             $room_info['description'],
             $room_info['type'],
