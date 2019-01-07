@@ -11,7 +11,7 @@
         <!-- Own CSS -->
         <link rel="stylesheet" href="rooms/css/main.css">
 
-        <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 
         <title><?= $page_title ?></title>
     </head>

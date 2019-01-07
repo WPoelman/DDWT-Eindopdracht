@@ -63,11 +63,13 @@ $router->get('/', function () use ($nav) {
     $page_subtitle = "Not related to new kids.";
     $page_content = "See nice rooms, meet new owners.";
     $navigation = get_navigation($nav, 0);
+
+    /* Check if the user is logged for buttons */
     if (check_login()) {
         $login_button = False;
-    } else {$login_button = "You don't have an account? ";
+    } else {
+        $login_button = "You don't have an account? ";
     }
-
 
     /* Choose Template */
     include use_template('main');
@@ -75,7 +77,10 @@ $router->get('/', function () use ($nav) {
 
 /* GET route: Log out*/
 $router->get('/logout', function () {
+    /* Try to logout the user */
     $feedback = logout_user();
+
+    /* Redirect to homepage GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
 });
 
@@ -92,8 +97,6 @@ $router->get('/contact', function () use ($nav) {
     /* Choose Template */
     include use_template('main');
 });
-
-
 
 /* GET route: Log In */
 $router->get('/login', function () use ($db, $nav){
@@ -116,6 +119,7 @@ $router->get('/login', function () use ($db, $nav){
 $router->post('/optin', function () use ($db){
     /* Try to login */
     $feedback = add_optin($db, $_POST);
+
     /* Redirect to log in GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',json_encode($feedback)));
 });
@@ -124,13 +128,13 @@ $router->post('/optin', function () use ($db){
 $router->post('/login', function () use ($db){
     /* Try to login */
     $feedback = log_in($db, $_POST);
+
     /* Redirect to log in GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',json_encode($feedback)));
 });
 
 /* GET route: Account Overview*/
 $router->get('/account', function () use ($db, $nav, $username) {
-
     /* Check if the user is logged in */
      if (!check_login()) {
          redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
@@ -145,10 +149,12 @@ $router->get('/account', function () use ($db, $nav, $username) {
         $error_msg = get_error($_GET['error_msg']);
     }
 
+    /* Get user info */
     $user_info = get_user_info($db, $username);
     $full_name = get_fullname($db, $username);
     $optins = get_optins($db, $username);
     $optins_table = get_optins_table($optins);
+
     /*Set page content */
     $page_title = "Account overview. Hello $full_name!";
     $page_subtitle = "View and edit your account information";
@@ -176,12 +182,15 @@ $router->get('/account', function () use ($db, $nav, $username) {
 
 /* GET route: Edit account */
 $router->get('/account/edit', function() use ($nav, $db, $username){
+    /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
     }
 
+    /* Get user info */
     $user_info = get_user_info($db, $username);
     $full_name = get_fullname($db, $username);
+
     /*Set page content */
     $page_title = "Edit your Account";
     $page_subtitle = "$full_name";
@@ -190,48 +199,58 @@ $router->get('/account/edit', function() use ($nav, $db, $username){
     $navigation = get_navigation($nav, null);
     $form_action = '/DDWT-Eindopdracht/rooms/account/edit';
 
+    /* Choose Template */
     include use_template('register');
 });
 
 /* POST route: Edit Account */
 $router->post('/account/edit', function () use ($db, $username){
+    /* Try to edit account */
     $feedback = edit_user($db, $_POST, $username);
-    redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s', json_encode($feedback)));
 
+    /* Redirect to account GET route */
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s', json_encode($feedback)));
 });
 
 /* POST route: Delete Account */
 $router->post('account/delete', function() use ($db, $username){
-
+    /* Try to delete account */
     $feedback = remove_user($db, $username);
     logout_user();
+
+    /* Redirect to homepage GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
 });
 
 /* GET route: change password */
 $router->get('/change_password', function () use ($nav, $db, $username) {
+    /* Page content */
     $full_name = get_fullname($db, $username);
     $page_title = "Change your password";
     $page_subtitle = "$full_name";
     $page_content = "";
     $navigation = get_navigation($nav, null);
 
+    /* Choose Template */
     include use_template('change_password');
-
 });
 
 /*POST route: change password*/
 $router->post('/change_password', function() use ($db, $username){
+    /* Try to change password */
     $feedback = change_password($db, $username, $_POST);
+
+    /* Redirect to edit account GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/account/edit/?error_msg=%s', json_encode($feedback)));
-
-
 });
 
 
-/* DELETE route: optin*/
+/* POST route: delete optin */
 $router->post('/optin/delete', function () use ($db, $username){
+    /* Get error msg from POST route */
     $feedback = remove_optin($db, $_POST["room"], $username);
+
+    /* Redirect to account GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s',
             json_encode($feedback)));
 });
@@ -258,7 +277,7 @@ $router->get('/register', function () use ($db, $nav) {
 
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
-    /* Try to register user */
+    /* Try to register user with check if an image is uploaded */
     if (isset($_FILES['picture'])){
         $feedback = register_user($db, $_POST, $_FILES);
     } else {
@@ -274,11 +293,12 @@ $router->post('/register', function () use ($db) {
 $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: All Rooms Overview */
-
     $router->get('/', function () use ($db, $nav) {
+        /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) {
             $error_msg = get_error($_GET['error_msg']);
         }
+
         /* Page content */
         $page_title = "Rooms overview";
         $page_subtitle = "Overview of all the rooms";
@@ -367,8 +387,9 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* POST route: Add Room */
     $router->post('/add', function () use ($db, $username) {
-        /* Add room to database */
         // todo: TESTEN if (check_role()) {
+
+        /* Add room to database with check if a picture is added */
         if (isset($_POST['picture'])){
             $feedback = add_room($db, $_POST, $username, $_FILES);
         } else {
@@ -426,6 +447,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         // todo: if (check_role())
         $room_id = $_POST["room_id"];
         $feedback = remove_room($db, $room_id, $username);
+
         /* Redirect to rooms overview GET route */
         redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
             json_encode($feedback)));
