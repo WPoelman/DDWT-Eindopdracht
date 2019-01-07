@@ -176,9 +176,10 @@ $router->get('/account', function () use ($db, $nav, $username) {
 
 /* GET route: Edit account */
 $router->get('/account/edit', function() use ($nav, $db, $username){
-    if (isset($_GET['feedback'])) {
-        $feedback = get_error($_GET['feedback']);
+    if (isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
     }
+
     $user_info = get_user_info($db, $username);
     $full_name = get_fullname($db, $username);
     /*Set page content */
@@ -199,14 +200,32 @@ $router->post('/account/edit', function () use ($db, $username){
 
 });
 
+/* GET route: change password */
+$router->get('/change_password', function () use ($nav, $db, $username) {
+    $full_name = get_fullname($db, $username);
+    $page_title = "Change your password";
+    $page_subtitle = "$full_name";
+    $page_content = "";
+    $navigation = get_navigation($nav, null);
+
+    include use_template('change_password');
+
+});
+
+/*POST route: change password*/
+$router->post('/change_password', function() use ($db, $username){
+    $feedback = change_password($db, $username, $_POST);
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/account/edit/?error_msg=%s', json_encode($feedback)));
+
+
+});
+
 
 /* DELETE route: optin*/
 $router->post('/optin/delete', function () use ($db, $username){
     $feedback = remove_optin($db, $_POST["room"], $username);
     redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s',
             json_encode($feedback)));
-
-
 });
 
 

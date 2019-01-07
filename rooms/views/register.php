@@ -49,7 +49,7 @@
                             <label for="password" class="col-sm-2 col-form-label">Password</label>
                             <div class="col-sm-3">
                                 <?php if(isset($user_info['password'])) :?>
-                                    <a href="">Change Password</a>
+                                    <a href="/DDWT-Eindopdracht/rooms/change_password">Change Password</a>
                                 <?php else :?>
                                     <input type="text" class="form-control" id="password" placeholder="*********" name="password" required>
                                 <?php endif; ?>

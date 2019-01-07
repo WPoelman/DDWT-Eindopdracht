@@ -353,7 +353,66 @@ function get_user_info($pdo, $username){
     return $user_info_exp;
 }
 
+/**
+ * Changes the password of the user
+ * @param $pdo
+ * @param $username
+ * @param $form_data
+ * @return array
+ */
+function change_password($pdo, $username, $form_data){
+    /* Check if there are no empty values */
+    if (
+        empty($form_data['oldpassword']) or
+        empty($form_data['newpassword']) or
+        empty($form_data['newpassword2'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You should enter your old and new password.'
+        ];
+    }
 
+    $user_info = get_user_info($pdo, $username);
+    /* Check password */
+    if ( !password_verify($form_data['oldpassword'], $user_info['password']) ){
+        return [
+            'type' => 'danger',
+            'message' => 'The old password you entered is incorrect!'
+        ];
+    }
+
+    if ($form_data['newpassword'] != $form_data['newpassword2']){
+        return [
+            'type' => 'danger',
+            'message' => 'You did not enter the same new password twice.'
+        ];
+    }
+
+    /* Hash password */
+    $password = password_hash($form_data['newpassword'], PASSWORD_DEFAULT);
+
+    /* Saving password */
+    $stmt = $pdo->prepare("UPDATE user SET password = ? WHERE username = ?");
+    $stmt->execute([
+        $password,
+        $username
+    ]);
+    /* Check if it worked */
+    $updated = $stmt->rowCount();
+    if ($updated == 1) {
+        return [
+            'type' => 'success',
+            'message' => 'Your passsword is successfully edited!'
+        ];
+    } else {
+        return [
+            'type' => 'warning',
+            'message' => 'No changes detected or something went wrong. Please try again.'
+        ];
+    }
+
+}
 
 /**
  * Allow an existing user to login using their credentials
@@ -561,6 +620,13 @@ function add_room($pdo, $room_info, $username, $file)
     }
 }
 
+/**
+ * @param $pdo
+ * @param $form_data
+ * @param $file
+ * @param $username
+ * @return array
+ */
 function edit_user($pdo, $form_data, $file, $username){
     /* check if all required fields are filled in */
     if (
@@ -597,7 +663,7 @@ function edit_user($pdo, $form_data, $file, $username){
     if ($updated == 1) {
         return [
             'type' => 'success',
-            'message' => 'Room is successfully edited!'
+            'message' => 'Your account is successfully edited!'
         ];
     } else {
         return [
