@@ -365,18 +365,11 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     });
 
     /* DELETE route: Delete Room */
-    //TODO: change $id to $room_id
-    $router->delete('/', function($room_id) use($db, $nav, $username) {
+    $router->post('/delete', function() use($db, $nav, $username) {
         /* Try to delete room */
-        // todo: if (check_role()){
-        $room_info = get_room_details($db, $room_id);
-        $username = $room_info['owner'];
-        //todo check if username from db is same as session username
-        //$display_buttons = False;
-        // if ($_SESSION['username']) == $room_info['owner']){
-        //   $display_buttons = True;
+        // todo: if (check_role())
+        $room_id = $_POST["room_id"];
         $feedback = remove_room($db, $room_id, $username);
-
         /* Redirect to rooms overview GET route */
         redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/?error_msg=%s',
             json_encode($feedback)));

@@ -644,10 +644,17 @@ function remove_room($pdo, $room_id, $username)
     }
 
     /* Delete room */
+    $stmt2 = $pdo->prepare("DELETE FROM room_address WHERE zip_code =? AND number = ? ");
+    $stmt2->execute([
+        $room_info["zip_code"],
+        $room_info["number"]
+    ]);
     $stmt = $pdo->prepare("DELETE FROM room WHERE id = ?");
     $stmt->execute([$room_id]);
-    $deleted = $stmt->rowCount();
-    if ($deleted == 1) {
+
+    $deleted1 = $stmt->rowCount();
+    $deleted2 = $stmt2->rowCount();
+    if ($deleted1 == 0 or $deleted2 == 0) {
         return [
             'type' => 'success',
             'message' => sprintf("Room was successfully removed")

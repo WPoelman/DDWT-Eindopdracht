@@ -72,9 +72,9 @@
                         <a href="/DDWT-Eindopdracht/rooms/rooms/edit/?room_id=<?= $room_id ?>" role="button" class="btn btn-warning">Edit</a>
                     </div>
                     <div class="col-sm-2">
-                        <form action="/DDWT-Eindopdracht/rooms/rooms/remove/" method="POST">
+                        <form action="/DDWT-Eindopdracht/rooms/rooms/delete" method="POST">
                             <input type="hidden" value="<?= $room_id ?>" name="room_id">
-                            <button type="submit" class="btn btn-danger">Remove</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </div>
                 </div>
