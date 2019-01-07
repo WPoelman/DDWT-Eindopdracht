@@ -243,7 +243,8 @@ function register_user($pdo, $form_data, $file){
     $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
 
     /* Save image to the server */
-    if (isset($file)) {
+    if ($file != Null) {
+        $image_name = basename($file["picture"]["name"]);
         $target_dir = "images/users/";
         $target_file = $target_dir . basename($file["picture"]["name"]);
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -251,7 +252,7 @@ function register_user($pdo, $form_data, $file){
         if($check = getimagesize($file["picture"]["tmp_name"]) == false) {
             return [
             'type' => 'danger',
-            'message' => 'The profile picture was not a supported file format!'
+            'message' => 'The profile picture is not a supported file format!'
             ];
         }
     /* Check if file already exists */
@@ -280,6 +281,8 @@ function register_user($pdo, $form_data, $file){
         $target_dir = "images/users/";
         $target_file = $target_dir . basename($file["picture"]["name"]);
         move_uploaded_file($file["picture"]["tmp_name"], $target_file);
+    } else {
+        $image_name = Null;
     }
 
     /* Save user to database */
@@ -298,7 +301,7 @@ function register_user($pdo, $form_data, $file){
             $form_data['studies'],
             $form_data['profession'],
             $form_data['biography'],
-            basename($file["picture"]["name"])
+            $image_name
         ]);
 
     } catch (PDOException $e) {
@@ -473,7 +476,7 @@ function add_room($pdo, $room_info, $username, $file)
     }
 
     /* Save image to the server */
-    if (isset($file)) {
+    if ($file != Null) {
         $target_dir = "images/rooms/";
         $target_file = $target_dir . basename($file["picture"]["name"]);
         $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));

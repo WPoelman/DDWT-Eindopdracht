@@ -195,8 +195,8 @@ $router->post('/optin/delete', function () use ($db, $username){
 /* GET route: Register */
 $router->get('/register', function () use ($db, $nav) {
     /* Get error msg from POST route */
-    if (isset($_GET['feedback'])) {
-        $feedback = get_error($_GET['feedback']);
+    if (isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
     }
 
     /*Set page content */
@@ -214,7 +214,11 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user */
-    $feedback = register_user($db, $_POST, $_FILES);
+    if (isset($_POST['picture'])){
+        $feedback = register_user($db, $_POST, $_FILES);
+    } else {
+        $feedback = register_user($db, $_POST, Null);
+    };
 
     /* Redirect to register GET route */
     redirect(sprintf('/DDWT-Eindopdracht/rooms/register/?error_msg=%s',
@@ -320,7 +324,11 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->post('/add', function () use ($db, $username) {
         /* Add room to database */
         // todo: TESTEN if (check_role()) {
-        $feedback = add_room($db, $_POST, $username, $_FILES);
+        if (isset($_POST['picture'])){
+            $feedback = add_room($db, $_POST, $username, $_FILES);
+        } else {
+            $feedback = add_room($db, $_POST, $username, Null);
+        };
 
         /* Redirect to room GET route */
         redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/add?error_msg=%s',
