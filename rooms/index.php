@@ -192,14 +192,13 @@ $router->get('/account/edit', function() use ($nav, $db, $username){
     include use_template('register');
 });
 
+/* POST route: Edit Account */
+$router->post('/account/edit', function () use ($db, $username){
+    $feedback = edit_user($db, $_POST, $_FILES, $username);
+    redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s', json_encode($feedback)));
 
-//    /* POST route: Edit Account */
-//    $router->post('/account', function () use ($db, $username) {
-//        $feedback = edit_user($db, $_POST, $username);
-//        /* Redirect to account GET route */
-//        redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s',
-//            json_encode($feedback)));
-//    });
+});
+
 
 /* DELETE route: optin*/
 $router->post('/optin/delete', function () use ($db, $username){
