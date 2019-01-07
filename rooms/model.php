@@ -186,12 +186,12 @@ function check_login(){
 
 /**
  * Gives the users role
- * @return String role or none if not set
+ * @return String role or False if not set
  */
 
 function get_user_role(){
-    if (isset($_SESSION['role'])=='owner'){
-        return True;
+    if (isset($_SESSION['role'])){
+        return $_SESSION['role'];
     } else {
         return False;
     }
