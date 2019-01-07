@@ -300,17 +300,17 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
                     'message' => "You don't have an account yet, please log in or register"
                 ])));
         };
-        // todo: check if logged in user is the same as editor
-        // todo: TEST
-        // $display_buttons = False;
-        // if ($_SESSION['username'] == $room_info['owner']) {
-        //   $display_buttons = True;
-        //}
-        $room_id = $_GET['room_id'];
+
+        /* Get room information */
+        $room_id=$_GET['room_id'];
         $room_info = get_room_details($db, $room_id);
 
-        // todo: display buttons check toevoegen
-        $display_buttons = True;
+        /* Display buttons to owner of room */
+        $display_buttons = False;
+        if ($_SESSION['username'] == $room_info['owner']){
+            $display_buttons = True;
+        }
+
 
         /* Page info */
         $page_title = "Information about:";
