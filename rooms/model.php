@@ -188,13 +188,15 @@ function check_login(){
  * Gives the users role
  * @return String role or none if not set
  */
- function get_user_role(){
-  if (isset($_SESSION['role'])) {
-     return $_SESSION['role'];
-  } else {
-      return 'none';
- }
-}
+
+function get_user_role(){
+    if (isset($_SESSION['role'])=='owner'){
+        return True;
+    } else {
+        return False;
+    }
+};
+
 
 /**
  * Register new users and assign the values to database

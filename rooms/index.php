@@ -16,7 +16,7 @@ $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 /* Credentials */
 $username = get_username();
-$role = get_user_role();
+
 
 /* Set the default routes for the navigation bar */
 $nav = Array(
@@ -359,6 +359,15 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->get('/add', function () use ($db, $nav, $username) {
         // todo: TESTEN if (check_role()) {
 
+
+        if (!get_user_role()) {
+            redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+                json_encode([
+                    'type'=>'danger',
+                    'message' => "You are not able to add a room with this account. Log in with an owner account or create one."
+                ])));
+        };
+
         /* Check if the user is logged in */
         if (!check_login()) {
             redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
@@ -367,6 +376,8 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
                     'message' => "You don't have an account yet, please log in or register"
                 ])));
         };
+
+
 
         /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) {
@@ -387,7 +398,6 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* POST route: Add Room */
     $router->post('/add', function () use ($db, $username) {
-        // todo: TESTEN if (check_role()) {
 
         /* Add room to database with check if a picture is added */
         if (isset($_POST['picture'])){
@@ -404,7 +414,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     /* GET route: Edit Room */
     $router->get('/edit', function () use ($db, $nav, $username) {
         /*Set page content */
-        // todo: TESTEN if (check_role()){
+
         /* Check if the user is logged in */
         if (!check_login()) {
             redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
@@ -413,6 +423,15 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
                     'message' => "You don't have an account yet, please log in or register"
                 ])));
         };
+
+        if (!get_user_role()) {
+            redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+                json_encode([
+                    'type'=>'danger',
+                    'message' => "You are not able to add a room with this account. Log in with an owner account or create one."
+                ])));
+        };
+
         /* Retrieve existing room info */
         $room_id = $_GET['room_id'];
         $room_info = get_room_details($db, $room_id);
@@ -430,7 +449,6 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* POST route: Edit Room */
     $router->post('/edit', function () use ($db, $username) {
-        // todo: TESTEN if (check_role()){
         /* Edit room */
         $room_id = $_POST['room_id'];
         $room_info_old = get_room_details($db, $room_id);
@@ -444,7 +462,6 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     /* POST route: Delete Room */
     $router->post('/delete', function() use($db, $nav, $username) {
         /* Try to delete room */
-        // todo: if (check_role())
         $room_id = $_POST["room_id"];
         $feedback = remove_room($db, $room_id, $username);
 
