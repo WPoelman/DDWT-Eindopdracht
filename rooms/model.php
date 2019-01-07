@@ -124,7 +124,7 @@ function get_rooms_table($rooms){
             <th scope="row">'.$value['title'].'</th>
             <th scope="row">'.$value['size'].'</th>
             <th scope="row">'.$value['price'].'</th>
-            <th scope="row"><img src="'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
+            <th scope="row"><img src="images/rooms/'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
             <td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-info">Show details</a></td>
         </tr>
         ';
@@ -447,7 +447,7 @@ function add_optin($pdo, $optin_info){
  * @param integer $username user that adds the series
  * @return array with message feedback
  */
-function add_room($pdo, $room_info, $username)
+function add_room($pdo, $room_info, $username, $file)
 {
     /* Check if all required fields are set */
     if (
@@ -472,6 +472,46 @@ function add_room($pdo, $room_info, $username)
         ];
     }
 
+    /* Save image to the server */
+    if (isset($file)) {
+        $target_dir = "images/rooms/";
+        $target_file = $target_dir . basename($file["picture"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+        /* Check if image file is a actual image or fake image */
+        if($check = getimagesize($file["picture"]["tmp_name"]) == false) {
+            return [
+                'type' => 'danger',
+                'message' => 'The picture was not a supported file format!'
+            ];
+        }
+        /* Check if file already exists */
+        if (file_exists($target_file)) {
+            return [
+                'type' => 'danger',
+                'message' => 'The picture already exists, try a different name!'
+            ];
+        }
+        /* Check file size */
+        if ($file["picture"]["size"] > 500000) {
+            return [
+                'type' => 'danger',
+                'message' => 'The picture is too big!'
+            ];
+        }
+        /* Allow certain file formats */
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+            && $imageFileType != "gif" ) {
+            return [
+                'type' => 'danger',
+                'message' => 'Only jpg, jpeg, png and gif files are allowed as picture. '
+            ];
+        }
+        /* if everything is ok, try to upload file */
+        $target_dir = "images/rooms/";
+        $target_file = $target_dir . basename($file["picture"]["name"]);
+        move_uploaded_file($file["picture"]["tmp_name"], $target_file);
+    }
+
     /* Add to room_adress */
     $stmt = $pdo->prepare("INSERT INTO room_address (zip_code, number, street, city) VALUES (?, ?, ?, ?)");
     $stmt->execute([
@@ -488,7 +528,7 @@ function add_room($pdo, $room_info, $username)
             $username,
             $room_info['title'],
             $room_info['size'],
-            $room_info['picture'],
+            basename($file["picture"]["name"]),
             $room_info['price'],
             $room_info['description'],
             $room_info['type'],
@@ -567,11 +607,10 @@ function edit_room($pdo, $room_info, $room_info_old, $username)
     ]);
 
     /* Update room table */
-    $stmt2 = $pdo->prepare("UPDATE room SET title = ?, size = ?, picture = ?, price = ?, description = ?, type = ?, zip_code = ?, number = ? WHERE id = ?");
+    $stmt2 = $pdo->prepare("UPDATE room SET title = ?, size = ?, price = ?, description = ?, type = ?, zip_code = ?, number = ? WHERE id = ?");
     $stmt2->execute([
         $room_info['title'],
         $room_info['size'],
-        $room_info['picture'],
         $room_info['price'],
         $room_info['description'],
         $room_info['type'],

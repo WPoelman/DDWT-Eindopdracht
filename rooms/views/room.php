@@ -38,7 +38,7 @@
                 </tr>
                 <tr>
                     <th scope="row">Picture</th>
-                    <td><?= $picture ?></td>
+                    <td><img src="../../images/rooms/<?= $picture ?>" width="30%"></td>
                 </tr>
                 <tr>
                     <th scope="row">Description</th>

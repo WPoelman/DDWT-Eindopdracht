@@ -320,7 +320,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->post('/add', function () use ($db, $username) {
         /* Add room to database */
         // todo: TESTEN if (check_role()) {
-        $feedback = add_room($db, $_POST, $username);
+        $feedback = add_room($db, $_POST, $username, $_FILES);
 
         /* Redirect to room GET route */
         redirect(sprintf('/DDWT-Eindopdracht/rooms/rooms/add?error_msg=%s',

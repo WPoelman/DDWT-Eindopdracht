@@ -33,7 +33,7 @@
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <p><?= $page_content ?></p>
-            <form action="<?= $form_action ?>" method="POST">
+            <form action="<?= $form_action ?>" method="POST" enctype="multipart/form-data">
                 <div class="form-group row">
                     <label for="inputSize" class="col-sm-2 col-form-label">Listing Title</label>
                     <div class="col-sm-10">
