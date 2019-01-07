@@ -46,11 +46,11 @@
                 </tr>
                 <tr>
                     <th scope="row">Size</th>
-                    <td><?= $size ?></td>
+                    <td><?= $size ?> m²</td>
                 </tr>
                 <tr>
                     <th scope="row">Price</th>
-                    <td><?= $price ?></td>
+                    <td>€<?= $price ?></td>
                 </tr>
                 <tr>
                     <th scope="row">Type of room</th>
@@ -62,7 +62,7 @@
                 </tr>
                 <tr>
                     <th scope="row"> Address</th>
-                    <td><?= $street ?><?= $city ?></td>
+                    <td><?= $street ?> <?= $number ?>, <?= $city ?></td>
                 </tr>
                 </tbody>
             </table>

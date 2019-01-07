@@ -265,11 +265,15 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         $display_buttons = True;
 
         /* Page info */
-        $page_title = sprintf("Information about %s", $room_info['title']);
+        $page_title = "Information about:";
+        $page_subtitle = sprintf($room_info['title']);
         $navigation = get_navigation($nav, 3);
         $right_column = use_template('optin');
 
         /* Page content */
+        $page_content = "Room info";
+        $description = $room_info['description'];
+        $number = $room_info['number'];
         $title = $room_info['title'];
         $type = $room_info['type'];
         $owner = $room_info['owner'];
