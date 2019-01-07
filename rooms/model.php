@@ -627,7 +627,7 @@ function add_room($pdo, $room_info, $username, $file)
  * @param $username
  * @return array
  */
-function edit_user($pdo, $form_data, $file, $username){
+function edit_user($pdo, $form_data, $username){
     /* check if all required fields are filled in */
     if (
         empty($form_data['username']) or
@@ -642,7 +642,7 @@ function edit_user($pdo, $form_data, $file, $username){
         ];
     }
 
-    $stmt = $pdo->prepare("UPDATE user SET username = ?, first_name = ?, last_name = ?, birth_date = ?, sex = ?, e_mail = ?, role = ?, phone_number = ?, studies = ?, profession = ?, biography = ?, profile_picture = ?  WHERE username = ?");
+    $stmt = $pdo->prepare("UPDATE user SET username = ?, first_name = ?, last_name = ?, birth_date = ?, sex = ?, e_mail = ?, role = ?, phone_number = ?, studies = ?, profession = ?, biography = ?  WHERE username = ?");
     $stmt->execute([
         $form_data['username'],
         $form_data['first_name'],
@@ -655,7 +655,6 @@ function edit_user($pdo, $form_data, $file, $username){
         $form_data['studies'],
         $form_data['profession'],
         $form_data['biography'],
-        basename($file["picture"]["name"]),
         $username
     ]);
     /* Check if it worked */
@@ -818,7 +817,20 @@ function get_optins_table($opt_ins){
  * @return array
  */
 function remove_user($pdo, $username){
-    /* Delete room */
+    /* Get user info to check if there is a picture */
+    $user_info = get_user_info($pdo, $username);
+
+    /* Remove picture */
+    if ($user_info['profile_picture'] != Null) {
+        if (!unlink("images/users/".$user_info['profile_picture'])){
+            return [
+                'type' => 'danger',
+                'message' => 'Something went wrong with deleting the profile picture.'
+            ];
+        }
+    }
+
+    /* Delete user from db */
     $stmt = $pdo->prepare("DELETE FROM user WHERE username = ?");
     $stmt->execute([$username]);
     $deleted = $stmt->rowCount();
@@ -874,11 +886,21 @@ function remove_room($pdo, $room_id, $username)
     /* Get room info */
     $room_info = get_room_details($pdo, $room_id);
 
-    /* Check if the user is allowed to edit the serie */
+    /* Check if the user is allowed to edit the room */
     if ($room_info['username'] =! $username){
         return [
             'type' => 'danger',
             'message' => 'There was an error. You are not allowed to remove this room.'];
+    }
+
+    /* Remove picture */
+    if ($room_info['picture'] != Null) {
+        if (!unlink("images/rooms/".$room_info['picture'])){
+            return [
+                'type' => 'danger',
+                'message' => 'Something went wrong with deleting the picture.'
+            ];
+        }
     }
 
     /* Delete room */

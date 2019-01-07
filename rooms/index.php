@@ -195,13 +195,14 @@ $router->get('/account/edit', function() use ($nav, $db, $username){
 
 /* POST route: Edit Account */
 $router->post('/account/edit', function () use ($db, $username){
-    $feedback = edit_user($db, $_POST, $_FILES, $username);
+    $feedback = edit_user($db, $_POST, $username);
     redirect(sprintf('/DDWT-Eindopdracht/rooms/account/?error_msg=%s', json_encode($feedback)));
 
 });
 
 /* POST route: Delete Account */
 $router->post('account/delete', function() use ($db, $username){
+
     $feedback = remove_user($db, $username);
     logout_user();
     redirect(sprintf('/DDWT-Eindopdracht/rooms/?error_msg=%s', json_encode($feedback)));
@@ -258,7 +259,7 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user */
-    if (isset($_POST['picture'])){
+    if (isset($_FILES['picture'])){
         $feedback = register_user($db, $_POST, $_FILES);
     } else {
         $feedback = register_user($db, $_POST, Null);
@@ -419,7 +420,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
             json_encode($feedback)));
     });
 
-    /* DELETE route: Delete Room */
+    /* POST route: Delete Room */
     $router->post('/delete', function() use($db, $nav, $username) {
         /* Try to delete room */
         // todo: if (check_role())
