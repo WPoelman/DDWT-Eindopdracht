@@ -506,7 +506,8 @@ function add_optin($pdo, $optin_info){
  * Add room to the database
  * @param object $pdo db object
  * @param array $room_info post array
- * @param integer $username user that adds the series
+ * @param integer $username user that adds the room
+ * @param mixed $file $_FILES array if there is an image, NULL if not
  * @return array with message feedback
  */
 function add_room($pdo, $room_info, $username, $file)
