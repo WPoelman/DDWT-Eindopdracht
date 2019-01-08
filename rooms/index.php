@@ -289,7 +289,7 @@ $router->post('/register', function () use ($db) {
 });
 
 //* MOUNT FOR ROOM VIEWS *//
-$router->mount('/rooms', function () use ($router, $db, $nav, $username, $role) {
+$router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
     /* GET route: All Rooms Overview */
     $router->get('/', function () use ($db, $nav) {
@@ -359,7 +359,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username, $role) 
     });
 
     /* GET route: Add Room */
-    $router->get('/add', function () use ($db, $nav, $username, $role) {
+    $router->get('/add', function () use ($db, $nav, $username) {
 
         /* Check if the user is logged in */
         if (!check_login()) {
