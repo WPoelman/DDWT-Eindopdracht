@@ -70,30 +70,33 @@
                     <td><img src="images/users/<?=$picture?>"> </td>
                 </tr>
             </table>
-            <p>
-            <a href="/DDWT-Eindopdracht/rooms/account/edit" role="button" class="btn btn-info">Edit</a>
+            <div class="row">
+                <div class="col-sm-2">
+                    <a href="/DDWT-Eindopdracht/rooms/account/edit" role="button" class="btn btn-info">Edit Account</a>
+                </div>
+                <div class="col-sm-2">
+                    <form action="/DDWT-Eindopdracht/rooms/account/delete" method="POST">
+                        <button type="submit" class="btn btn-danger">Delete account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-            <form action="/DDWT-Eindopdracht/rooms/account/delete" method="POST">
-                <button type="submit" class="btn btn-danger">Delete account</button>
-            </form></p>
-            <p>
-            <br>
-                <h5>Your opt-ins</h5>
-            </p>
+
+        <!-- Right column -->
+        <div class="col-md-4">
+            <br/>
+            <br/>
+            <h2> Your messages </h2>
             <?php if(isset($optins[0]["message"])){
                 echo $optins_table;
             }
             else {
                 echo "You have no opt-ins.";
             }
-                ?>
+            ?>
 
             <?php if(isset($left_content)){echo $left_content;} ?>
-        </div>
-
-        <!-- Right column -->
-        <div class="col-md-4">
-            <?php if(isset($right_column)){echo $right_column;} ?>
         </div>
 
     </div>
