@@ -316,6 +316,7 @@ function register_user($pdo, $form_data, $file){
     /* Login user and redirect */
     session_start();
     $_SESSION['username'] = $form_data['username'];
+    $_SESSION['role'] = $form_data['role'];
     $feedback = [
         'type' => 'success',
         'message' => sprintf('%s, your account was successfully created!', get_fullname($pdo, $_SESSION['username']))
@@ -463,6 +464,7 @@ function log_in($pdo, $form_data){
     } else {
         session_start();
         $_SESSION['username'] = $user_info['username'];
+        $_SESSION['role'] = $form_data['role'];
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',

@@ -16,8 +16,6 @@ $db = connect_db('localhost', 'roomturbo', 'roomturbo', 'roomturbo');
 
 /* Credentials */
 $username = get_username();
-$role = get_user_role();
-
 
 /* Set the default routes for the navigation bar */
 $nav = Array(
@@ -279,7 +277,7 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user with check if an image is uploaded */
-    if (isset($_FILES['picture'])){
+    if (isset($_POST['picture'])){
         $feedback = register_user($db, $_POST, $_FILES);
     } else {
         $feedback = register_user($db, $_POST, Null);
@@ -326,18 +324,22 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username, $role) 
         $room_id=$_GET['room_id'];
         $room_info = get_room_details($db, $room_id);
 
-        /* Display buttons to owner of room */
+        /* Display edit and delete buttons to owner of room */
         $display_buttons = False;
+
         if ($_SESSION['username'] == $room_info['owner']){
             $display_buttons = True;
         }
 
+        /* Check if the user is allowed to opt-in */
+        if ($_SESSION['role'] == 'tenant') {
+            $right_column = use_template('optin');
+        }
 
         /* Page info */
         $page_title = "Information about:";
         $page_subtitle = sprintf($room_info['title']);
         $navigation = get_navigation($nav, 3);
-        $right_column = use_template('optin');
 
         /* Page content */
         $page_content = "Room info";
@@ -358,8 +360,6 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username, $role) 
 
     /* GET route: Add Room */
     $router->get('/add', function () use ($db, $nav, $username, $role) {
-        // todo: TESTEN if (check_role()) {
-
 
         /* Check if the user is logged in */
         if (!check_login()) {
@@ -370,16 +370,13 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username, $role) 
                 ])));
         };
 
-
-        if (!check_user_role()) {
+        if ($_SESSION['role'] == 'tenant') {
             redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
                 json_encode([
                     'type'=>'danger',
                     'message' => "You are not able to add a room with this account. Log in with an owner account or create one."
                 ])));
         };
-
-
 
         /* Get error msg from POST route */
         if (isset($_GET['error_msg'])) {
@@ -426,11 +423,11 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username, $role) 
                 ])));
         };
 
-        if (!get_user_role()) {
+        if ($_SESSION['role'] == 'tenant') {
             redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
                 json_encode([
                     'type'=>'danger',
-                    'message' => "You are not able to add a room with this account. Log in with an owner account or create one."
+                    'message' => "You are not able to add/edit a room with this account. Log in with an owner account or create one."
                 ])));
         };
 
