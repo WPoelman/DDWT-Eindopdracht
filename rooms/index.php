@@ -146,17 +146,20 @@ $router->get('/account', function () use ($db, $nav, $username) {
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
-    }
+    };
 
     /* Get user info */
     $user_info = get_user_info($db, $username);
     $full_name = get_fullname($db, $username);
     $optins = get_optins($db, $username);
-    $optins_table = get_optins_table($optins);
+    $optins_table = get_optins_table($optins, $_SESSION['role']);
+
 
     /*Set page content */
     $page_title = "Account overview. Hello $full_name!";
     $page_subtitle = "View and edit your account information";
+    $right_column = True;
+    $display_buttons = True;
 
     /* Page content */
     $page_content = "Your info";
@@ -174,6 +177,48 @@ $router->get('/account', function () use ($db, $nav, $username) {
     $submit_btn = "Submit";
     $navigation = get_navigation($nav, 1);
     $form_action = '/DDWT-Eindopdracht/rooms/account';
+
+    /* Choose Template */
+    include use_template('account');
+});
+
+/* GET route for single account view */
+$router->get('/account-view', function () use ($db, $nav, $username) {
+    /* Check if the user is logged in */
+    if (!check_login()) {
+        redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
+            json_encode([
+                'type' => 'danger',
+                'message' => "You don't have an account yet, please log in or register"
+            ])));
+    };
+
+    /* Get user info */
+    $user_info = get_user_info($db, $username);
+    $full_name = get_fullname($db, $username);
+
+    /*Set page content */
+    $page_title = "Account overview of $full_name";
+    $page_subtitle = "Read information about $full_name ";
+    $right_column = False;
+    $display_buttons = False;
+
+    /* Page content */
+    $page_content = "User info";
+    $name = $user_info['username'];
+    $sex = $user_info['sex'];
+    $email = $user_info['e_mail'];
+    $phone_number = $user_info['phone_number'];
+    $birth_date = $user_info['birth_date'];
+    $role = $user_info['role'];
+    $profession = $user_info['profession'];
+    $studies = $user_info['studies'];
+    $biography = $user_info['biography'];
+    $picture = $user_info['profile_picture'];
+
+
+    $navigation = get_navigation($nav, null);
+
 
     /* Choose Template */
     include use_template('account');

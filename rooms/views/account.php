@@ -24,13 +24,11 @@
     <div class ="row"> <br></div>
 
     <div class="row">
-
+        <h1><?= $page_title ?></h1>
         <!-- Left column -->
-        <div class="col-md-8">
+        <div class="col-md-7">
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
-
-            <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <table class="table table-hover">
                 <tr>
@@ -70,31 +68,33 @@
                     <td><img src="images/users/<?=$picture?>"> </td>
                 </tr>
             </table>
+            <?php if ($display_buttons) { ?>
             <div class="row">
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <a href="/DDWT-Eindopdracht/rooms/account/edit" role="button" class="btn btn-info">Edit Account</a>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <form action="/DDWT-Eindopdracht/rooms/account/delete" method="POST">
                         <button type="submit" class="btn btn-danger">Delete account</button>
                     </form>
                 </div>
             </div>
+        <?php }?>
         </div>
 
 
         <!-- Right column -->
-        <div class="col-md-4">
-            <br/>
-            <br/>
-            <h2> Your messages </h2>
-            <?php if(isset($optins[0]["message"])){
-                echo $optins_table;
-            }
-            else {
-                echo "You have no opt-ins.";
-            }
-            ?>
+        <?php if ($right_column) { ?>
+            <div class="col-md-5">
+                <h5> Your messages </h5>
+                <?php if(isset($optins[0]["message"])){
+                    echo $optins_table;
+                } else {
+                    echo "You have no opt-ins.";
+                }
+                ?>
+            </div>
+        <?php }?>
 
             <?php if(isset($left_content)){echo $left_content;} ?>
         </div>

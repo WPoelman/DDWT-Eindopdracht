@@ -781,38 +781,73 @@ function get_optins($pdo, $username){
 /**
  * Makes a table for all given opt-ins
  * @param $opt_ins
+ * @param $user_role
  * @return string table
  */
-function get_optins_table($opt_ins){
-    $table_exp = '
-        <table class = "table table-hover">
-        <thead>
-        <tr>
-            <th scope="col" class="col-sm-8"> Message </th>
-            <th scope="col" class="col-sm-1"> Room </th>
-        </tr>
-        </thead>
-        <tbody>';
-    foreach($opt_ins as $key => $value){
-        $table_exp .= '
-        <tr>
-            <td scope="row">'.$value['message'].'</td>
-            <td scope="row">'.$value['id'].'</td>
-            <td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
-    <a href="/DDWT-Eindopdracht/rooms/account"></a>
-    <input type="hidden" name="room" value='.$value['id'].'/>
-        <button type="submit" class="btn btn-primary"> Delete </button>
-
-</form>
-
+function get_optins_table($opt_ins, $user_role){
+    if ($user_role == 'tenant') {
+        $table_exp_tenant = '
+            <table class = "table table-hover">
+            <thead>
+            <tr>
+                <th scope="col" class="col-sm-6"> Message </th>
+                <th scope="col" class="col-sm-1"> Room </th>
+                <th scope="col" class="col-sm-1"> Delete</th>
+             </tr>
+            </thead>
+            <tbody>';
+        foreach ($opt_ins as $key => $value) {
+            $table_exp_tenant .= '
+            <tr>
+                <td scope="row">' . $value['message'] . '</td>
+                <td scope="row">' . $value['id'] . '</td>
+                <td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
+                    <a href="/DDWT-Eindopdracht/rooms/account"></a>
+                    <input type="hidden" name="room" value=' . $value['id'] . '/>
+                    <button type="submit" class="btn btn-primary"> Delete </button>
+                </form></td>
             </tr>
         ';
-    }
-    $table_exp .= '
+        }
+        $table_exp_tenant .= '
     </tbody>
     </table>
     ';
-    return $table_exp;
+        return $table_exp_tenant;
+    } else {
+        $table_exp_owner = '
+            <table class = "table table-hover">
+            <thead>
+            <tr>
+                <th scope="col" class="col-sm-5"> Message </th>
+                <th scope="col" class="col-sm-1"> Room </th>
+                <th scope="col" class="col-sm-1"> User</th>
+                <th scope="col" class="col-sm-1"></th>
+                <th scope="col" class="col-sm-1"></th>
+             </tr>
+            </thead>
+            <tbody>';
+        foreach ($opt_ins as $key => $value) {
+            $table_exp_owner .= '
+            <tr>
+                <td scope="row">' . $value['message'] . '</td>
+                <td scope="row">' . $value['id'] . '</td>
+                <td scope="row">' . $value['username'].'</td>
+                <td><a href="/DDWT-Eindopdracht/rooms/account-view/?username=' . $value['username'] . '" role="button" class="btn btn-info"> Show User Details</a></td>
+                <td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
+                    <a href="/DDWT-Eindopdracht/rooms/account"></a>
+                    <input type="hidden" name="room" value=' . $value['id'] . '/>
+                    <button type="submit" class="btn btn-primary"> Delete </button>
+                </form></td>
+            </tr>
+        ';
+        }
+        $table_exp_owner .= '
+    </tbody>
+    </table>
+    ';
+        return $table_exp_owner;
+    }
 }
 
 /**
