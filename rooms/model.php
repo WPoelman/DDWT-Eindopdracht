@@ -37,7 +37,7 @@ function connect_db($host, $db, $user, $pass){
 /**
  * Creates filename to the template
  * @param string $template filename of the template without extension
- * @return string
+ * @return string filename template
  */
 function use_template($template){
     $template_doc = sprintf("views/%s.php", $template);
@@ -46,8 +46,8 @@ function use_template($template){
 
 /**
  * Creates navigation HTML code using given array
- * @param $template
- * @param $active_id
+ * @param html $template
+ * @param int $active_id
  * @return string html code that represents the navigation
  */
 function get_navigation($template, $active_id){
@@ -79,8 +79,8 @@ function get_navigation($template, $active_id){
 
 /**
  * Get rooms from database
- * @param $pdo
- * @return array
+ * @param object $pdo
+ * @return array rooms
  */
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM room');
@@ -103,7 +103,7 @@ function get_rooms($pdo){
 }
 
 /** Make room overview table
- * @param $rooms
+ * @param array $rooms
  * @return string $table_exp
  */
 function get_rooms_table($rooms){
@@ -138,9 +138,9 @@ function get_rooms_table($rooms){
 
 /**
  * Generates an array with room details
- * @param $pdo
- * @param $room_id
- * @return $room_id_exp
+ * @param object $pdo
+ * @param string $room_id
+ * @return array $room_id_exp
  */
 function get_room_details($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
@@ -174,7 +174,7 @@ function get_username(){
 
 /**
  * Checks if user is logged in
- * @return bool
+ * @return bool to check if logged in or not
  */
 function check_login(){
     if (isset($_SESSION['username'])) {
@@ -186,7 +186,7 @@ function check_login(){
 
 /**
  * Gives the users role
- * @return String role or False if not set
+ * @return string role or False if not set
  */
 
 function get_user_role(){
@@ -197,13 +197,12 @@ function get_user_role(){
     }
 };
 
-
 /**
  * Register new users and assign the values to database
- * @param $pdo database object
- * @param $form_data $_POST form data
- * @param $file $_FILES post data (profile picture)
- * @return array
+ * @param object $pdo
+ * @param array $form_data $_POST form data
+ * @param array $file $_FILES post data (profile picture)
+ * @return array with feedback message
  */
 function register_user($pdo, $form_data, $file){
     /* Check if there are no empty values */
@@ -326,9 +325,9 @@ function register_user($pdo, $form_data, $file){
 
 /**
  * Get full name of users
- * @param $pdo
- * @param $username
- * @return array
+ * @param object $pdo
+ * @param string $username
+ * @return string users full name
  */
 function get_fullname($pdo, $username){
     $stmt = $pdo->prepare('SELECT first_name, last_name FROM user where username = ?');
@@ -339,9 +338,9 @@ function get_fullname($pdo, $username){
 
 /**
  * Gets all info from users
- * @param $pdo
- * @param $username
- * @return array
+ * @param object $pdo
+ * @param string $username
+ * @return array user info
  */
 function get_user_info($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
@@ -358,10 +357,10 @@ function get_user_info($pdo, $username){
 
 /**
  * Changes the password of the user
- * @param $pdo
- * @param $username
- * @param $form_data
- * @return array
+ * @param object $pdo
+ * @param string $username
+ * @param array $form_data
+ * @return array feedback message
  */
 function change_password($pdo, $username, $form_data){
     /* Check if there are no empty values */
@@ -419,9 +418,9 @@ function change_password($pdo, $username, $form_data){
 
 /**
  * Allow an existing user to login using their credentials
- * @param $pdo
- * @param $form_data
- * @return array
+ * @param object $pdo
+ * @param array $form_data
+ * @return array feedback message
  */
 function log_in($pdo, $form_data){
     /* Check if there are no empty values */
@@ -510,7 +509,7 @@ function add_optin($pdo, $optin_info){
  * Add room to the database
  * @param object $pdo db object
  * @param array $room_info post array
- * @param integer $username user that adds the room
+ * @param int $username user that adds the room
  * @param mixed $file $_FILES array if there is an image, NULL if not
  * @return array with message feedback
  */
@@ -626,11 +625,11 @@ function add_room($pdo, $room_info, $username, $file)
 }
 
 /**
- * @param $pdo
- * @param $form_data
- * @param $file
- * @param $username
- * @return array
+ * Edit user account
+ * @param object $pdo
+ * @param array $form_data
+ * @param string $username
+ * @return array with edited user account
  */
 function edit_user($pdo, $form_data, $username){
     /* check if all required fields are filled in */
@@ -684,7 +683,7 @@ function edit_user($pdo, $form_data, $username){
  * @param array $room_info post array
  * @param array $room_info_old old room info to look up the address
  * @param integer $username username from the session info
- * @return array
+ * @return array with updated room info
  */
 function edit_room($pdo, $room_info, $room_info_old, $username)
 {
@@ -762,7 +761,7 @@ function edit_room($pdo, $room_info, $room_info_old, $username)
  * Get all the opt-ins of a specific user
  * @param $pdo
  * @param $username
- * @return array
+ * @return array with all opt-ins
  */
 function get_optins($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM opt_in WHERE username = ? ');
@@ -782,7 +781,7 @@ function get_optins($pdo, $username){
  * Makes a table for all given opt-ins
  * @param $opt_ins
  * @param $user_role
- * @return string table
+ * @return string table of all opt-ins of user
  */
 function get_optins_table($opt_ins, $user_role){
     if ($user_role == 'tenant') {
@@ -852,9 +851,9 @@ function get_optins_table($opt_ins, $user_role){
 
 /**
  * Removes a user account
- * @param $pdo
- * @param $username
- * @return array
+ * @param object $pdo
+ * @param string $username
+ * @return array feedback message
  */
 function remove_user($pdo, $username){
     /* Get user info to check if there is a picture */
@@ -889,11 +888,11 @@ function remove_user($pdo, $username){
 }
 
 /**
- * Removes an optin
+ * Removes an opt-in
  * @param object $pdo db object
  * @param int $id of room
  * @param string $username username of the owner
- * @return array message
+ * @return array and feedback message
  */
 function remove_optin($pdo, $id, $username)
 {
@@ -919,7 +918,7 @@ function remove_optin($pdo, $id, $username)
  * @param object $pdo db object
  * @param int $room_id id of the to be deleted room
  * @param string $username username of the owner
- * @return array message
+ * @return array feedback message
  */
 function remove_room($pdo, $room_id, $username)
 {
@@ -969,7 +968,7 @@ function remove_room($pdo, $room_id, $username)
 
 /**
  * Destroys a session of a user
- * @return array message
+ * @return array feedback message
  */
 function logout_user() {
     session_start();
@@ -988,8 +987,9 @@ function logout_user() {
 
 /**
  * Creats HTML alert code with information about the success or failure
+ * @param array feedback
  * @param bool $feedback True if success, False if failure
- * @return string
+ * @return string with error
  */
 function get_error($feedback)
 {
