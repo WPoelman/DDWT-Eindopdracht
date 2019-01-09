@@ -900,7 +900,8 @@ function get_optins_table($opt_ins, $pdo,  $tablestyle){
 
     }
     else {
-        $table_exp .= '<th scope="col" class="col-sm-1"> Delete</th>';
+        $table_exp .= '<th scope="col" class="col-sm-1"> Delete</th>
+                       <th scope = "col" class="col-sm-1">View</th>';
     }
     $table_exp .= '</tr>
             </thead>
@@ -919,8 +920,9 @@ function get_optins_table($opt_ins, $pdo,  $tablestyle){
             $table_exp .= '<td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
                     <a href="/DDWT-Eindopdracht/rooms/account"></a>
                     <input type="hidden" name="room" value=' . $value['id'] . '/>
-                    <button type="submit" class="btn btn-primary"> Delete </button>
-                </form></td>';
+                    <button type="submit" class="btn btn-danger"> Delete </button>
+                </form></td>
+                <td scope="row"><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-info">View Room</a></td>';
         }
         $table_exp .= '</tr>
         ';
