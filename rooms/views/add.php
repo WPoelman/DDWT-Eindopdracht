@@ -118,12 +118,14 @@
                             } ?></textarea>
                         </div>
                     </div>
+                    <?php if(!isset($room_info)) :?>
                     <div class="form-group row">
                     <label for="inputPicture" class="col-sm-2 col-form-label">Add a picture</label>
                     <div class="col-sm-10">
                         <input type="file" id="inputPicture" name="picture">
                     </div>
                     </div>
+                        <?php endif; ?>
                 <?php if (isset($room_id)) { ?><input type="hidden" name="room_id"
                                                       value="<?php echo $room_id ?>"><?php } ?>
                 <div class="form-group row">

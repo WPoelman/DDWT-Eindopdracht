@@ -32,10 +32,20 @@
             <h1><?= $page_title ?></h1>
             <h5><?= $page_subtitle ?></h5>
             <?php if (isset($logo)) :?>
-                <img src="<?php echo $logo ?> " >
+                <img src="<?php echo $logo ?> " height="100" ">
             <?php endif; ?>
-
+            <p></p>
             <p><?= $page_content ?></p>
+            <?php if(isset($contact)) :?>
+            <ul>
+                <li><pre>Marieke Visscher  - s2985012</pre></li>
+                <li><pre>Rimmert Sijtsma   - s3220176</pre></li>
+                <li><pre>Lisa Stuifzand    - s2997851</pre></li>
+                <li><pre>Wessel Poelman    - s2976129</pre></li>
+                <li><pre>Iris Meijer       - s3761304</pre></li>
+
+            </ul>
+            <?php endif; ?>
             <?php if($login_button) : ?>
                 <a href="/DDWT-Eindopdracht/rooms/login" role="button" class="btn btn-info">Login</a><br><br>
                 <?php echo $login_button; ?><a href="/DDWT-Eindopdracht/rooms/register">Register here</a>

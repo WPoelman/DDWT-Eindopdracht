@@ -52,6 +52,7 @@ $router = new \Bramus\Router\Router();
 
 /* GET route: Landing Page */
 $router->get('/', function () use ($nav) {
+
     /* Get error msg from POST route */
     if (isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
@@ -60,7 +61,7 @@ $router->get('/', function () use ($nav) {
     /*Set page content */
     $page_title = "RoomTurbo";
     $page_subtitle = "Not related to new kids.";
-    $page_content = "See nice rooms, meet new owners.";
+    $page_content = "";
     $navigation = get_navigation($nav, 0);
 
     /* Check if the user is logged for buttons */
@@ -88,8 +89,9 @@ $router->get('/contact', function () use ($nav) {
     /*Set page content */
     $page_title = "Contact info RoomTurbo";
     $page_subtitle = "Contact us";
-    $page_content = "To contact us, mail wessel@roomturbo.nl";
     $logo = "/DDWT-Eindopdracht/rooms/images/logo.png";
+    $page_content = "RoomTurbo is made by:";
+    $contact = True;
     $navigation = get_navigation($nav, 2);
     $login_button = False;
 
@@ -151,9 +153,15 @@ $router->get('/account', function () use ($db, $nav, $username) {
     /* Get user info */
     $user_info = get_user_info($db, $username);
     $full_name = get_fullname($db, $username);
-    $optins = get_optins($db, $username);
-    $optins_table = get_optins_table($optins, $_SESSION['role']);
-
+    if ($_SESSION['role'] == "owner") {
+        $room_ids  = get_rooms_owner_ids($db, $username);
+        $optins = get_optins_owner($db, $room_ids);
+        $optins_table = get_optins_table($optins, $db, True);
+    }
+    else{
+        $optins = get_optins_tenant($db, $username);
+        $optins_table = get_optins_table($optins, $db,  False);
+    }
 
     /*Set page content */
     $page_title = "Account overview. Hello $full_name!";
@@ -183,7 +191,8 @@ $router->get('/account', function () use ($db, $nav, $username) {
 });
 
 /* GET route for single account view */
-$router->get('/account-view', function () use ($db, $nav, $username) {
+$router->get('/account_view', function () use ($db, $nav) {
+    $username = $_GET['username'];
     /* Check if the user is logged in */
     if (!check_login()) {
         redirect(sprintf('/DDWT-Eindopdracht/rooms/login/?error_msg=%s',
@@ -345,8 +354,16 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
 
         /* Page content */
         $page_title = "Rooms overview";
-        $page_subtitle = "Overview of all the rooms";
-        $page_content = get_rooms_table(get_rooms($db));
+        if(check_login() and $_SESSION['role'] == "owner"){
+                $page_subtitle = "Your room listings";
+                $room_ids = get_rooms_owner_ids($db, $_SESSION['username']);
+                $page_content = get_rooms_table(get_rooms_owner($db, $room_ids), True);
+        }
+        else{
+            $page_subtitle = "Overview of all the rooms";
+            $page_content = get_rooms_table(get_rooms($db), False);
+        }
+
         $navigation = get_navigation($nav, 3);
         $login_button = False;
 
@@ -376,7 +393,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
             $display_buttons = True;
         }
 
-        /* Check if the user is allowed to opt-in */
+//        /* Check if the user is allowed to opt-in */
         if ($_SESSION['role'] == 'tenant') {
             $right_column = use_template('optin');
         }

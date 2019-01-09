@@ -26,7 +26,7 @@
     <div class="row">
         <h1><?= $page_title ?></h1>
         <!-- Left column -->
-        <div class="col-md-7">
+        <div class="col-md-6">
             <!-- Error message -->
             <?php if (isset($error_msg)){echo $error_msg;} ?>
             <h5><?= $page_subtitle ?></h5>
@@ -65,7 +65,7 @@
                 </tr>
                 <tr>
                     <th> Profile picture </th>
-                    <td><img src="images/users/<?=$picture?>"> </td>
+                    <td><img src="images/users/<?=$picture?>" alt=""> </td>
                 </tr>
             </table>
             <?php if ($display_buttons) { ?>
@@ -85,7 +85,7 @@
 
         <!-- Right column -->
         <?php if ($right_column) { ?>
-            <div class="col-md-5">
+            <div class="col-md-6">
                 <h5> Your messages </h5>
                 <?php if(isset($optins[0]["message"])){
                     echo $optins_table;
