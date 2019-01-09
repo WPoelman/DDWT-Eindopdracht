@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="english">
+<html lang="english" xmlns="http://www.w3.org/1999/html">
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -113,32 +113,36 @@
                             } ?>" name="email" required>
                             </div>
 
-                            <label for="inputType" class="col-sm-2 col-form-label">Role</label>
-                            <div class="col-sm-3">
-                                <select class="custom-select" name="role">
-                                    <?php if(isset($user_info)) : ?>
-                                        <?php if($user_info['role'] == "owner"):?>
-                                            <option value="owner" selected>Owner</option>
-                                            <option  value="tenant">Tenant</option>
-                                        <?php else: ?>
-                                            <option value="owner" >Owner</option>
-                                            <option  value="tenant" selected>Tenant</option>
-                                        <?php endif; ?>
-                                    <?php else: ?>
-                                        <option value="owner">Owner</option>
-                                        <option  value="tenant">Tenant</option>
-                                    <?php endif; ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label for="phonenumber" class="col-sm-2 col-form-label">Phonenumber</label>
                             <div class="col-sm-3">
-                            <input type="tel" class="form-control" id="phonenumber" placeholder="0610012002" value="<?php if (isset($user_info)) {
-                                echo $user_info['phone_number'];
-                            } ?>" name="phonenumber" pattern="[0]{1}[6]{1}[0-9]{8}" required>
+                                <input type="tel" class="form-control" id="phonenumber" placeholder="0610012002" value="<?php if (isset($user_info)) {
+                                    echo $user_info['phone_number'];
+                                } ?>" name="phonenumber" pattern="[0]{1}[6]{1}[0-9]{8}" required>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <label for="language" class="col-sm-2 col-form-label">Language</label>
+                            <div class="col-sm-1">
+                                <input type="checkbox" class="form-control" id="language" value="English" name="language[]"> English
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" class="form-control" id="language" value="Dutch" name="language[]"> Dutch
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" class="form-control" id="language" value="German" name="language[]"> German
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" class="form-control" id="language" value="French" name="language[]"> French
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" class="form-control" id="language" value="Spanish" name="language[]"> Spanish
+                            </div>
+                            <div class="col-sm-1">
+                                <input type="checkbox" class="form-control" id="language" value="Other" name="language[]"> Other
+                            </div>
+                        </div>
+
                         <div class="form-group row">
                             <label for="studies" class="col-sm-2 col-form-label">Enter your study</label>
                             <div class="col-sm-3">
@@ -160,6 +164,24 @@
                             <textarea type="text" class="form-control" id="biography" placeholder="Hi, my name is..." value="<?php if (isset($user_info)) {
                                 echo $user_info['biography'];
                             } ?>" name="biography"></textarea>
+                            </div>
+
+                            <label for="inputType" class="col-sm-2 col-form-label">Role</label>
+                            <div class="col-sm-3">
+                                <select class="custom-select" name="role">
+                                    <?php if(isset($user_info)) : ?>
+                                        <?php if($user_info['role'] == "owner"):?>
+                                            <option value="owner" selected>Owner</option>
+                                            <option  value="tenant">Tenant</option>
+                                        <?php else: ?>
+                                            <option value="owner" >Owner</option>
+                                            <option  value="tenant" selected>Tenant</option>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <option value="owner">Owner</option>
+                                        <option  value="tenant">Tenant</option>
+                                    <?php endif; ?>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group row">

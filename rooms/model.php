@@ -212,6 +212,7 @@ function register_user($pdo, $form_data, $file){
         empty($form_data['first_name']) or
         empty($form_data['last_name']) or
         empty($form_data['birthdate']) or
+        empty($form_data['language']) or
         empty($form_data['email'])
     ) {
         return [
@@ -288,8 +289,8 @@ function register_user($pdo, $form_data, $file){
 
     /* Save user to database */
     try {
-        $stmt = $pdo->prepare('INSERT INTO user (username, password, first_name, last_name, birth_date, sex, e_mail, role, phone_number, studies, profession, biography, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        $stmt->execute([
+        $stmt2 = $pdo->prepare('INSERT INTO user (username, password, first_name, last_name, birth_date, sex, e_mail, role, phone_number, studies, profession, biography, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        $stmt2->execute([
             $form_data['username'],
             $password,
             $form_data['first_name'],
@@ -311,6 +312,14 @@ function register_user($pdo, $form_data, $file){
             'message' => sprintf('There was an error: %s', $e->getMessage())
         ];
     }
+        /* Save language to database */
+        foreach ($form_data['language'] as $selected){
+            $stmt = $pdo->prepare("INSERT INTO language (language, username) VALUES (?, ?)");
+            $stmt->execute([
+                $selected,
+                $form_data['username']
+            ]);
+        }
 
     /* Login user and redirect */
     session_start();
@@ -661,8 +670,22 @@ function edit_user($pdo, $form_data, $username){
         $form_data['biography'],
         $username
     ]);
+
+    /* Edit language in database */
+
+        $stmt2 = $pdo->prepare("DELETE FROM language WHERE username = ?");
+        $stmt2->execute([$username]);
+
+    foreach ($form_data['language'] as $selected){
+        $stmt3 = $pdo->prepare("INSERT INTO language (language, username) VALUES (?, ?)");
+        $stmt3->execute([
+            $selected,
+            $form_data['username']
+        ]);
+    }
+
     /* Check if it worked */
-    $updated = $stmt->rowCount();
+    $updated = $stmt or $stmt3->rowCount();
     if ($updated == 1) {
         return [
             'type' => 'success',
@@ -675,7 +698,6 @@ function edit_user($pdo, $form_data, $username){
         ];
     }
 }
-
 
 /**
  * Updates a room in the database using post array
@@ -872,7 +894,10 @@ function remove_user($pdo, $username){
     /* Delete user from db */
     $stmt = $pdo->prepare("DELETE FROM user WHERE username = ?");
     $stmt->execute([$username]);
-    $deleted = $stmt->rowCount();
+
+    $stmt2 = $pdo->prepare("DELETE FROM language WHERE username =?");
+    $stmt2->execute([$username]);
+    $deleted = $stmt or $stmt2->rowCount();
     if ($deleted == 1) {
         return [
             'type' => 'success',
