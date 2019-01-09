@@ -147,7 +147,8 @@ function get_rooms_table($rooms, $tablestyle){
             <th scope="row">' . $value['price'] . '</th>
             <th scope="row"><img src="images/rooms/' . $value['picture'] . '" class="img-thumbnail" alt=""</th>';
              if ($tablestyle) {
-                 $table_exp .= '<td><a href="/DDWT-Eindopdracht/rooms/account" role="button" class="btn btn-info">Show Opt-ins</a></td>';
+                 $table_exp .= '<td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id=' . $value['id'] . '" role="button" class="btn btn-info">Show details</a></td>
+                                <td><a href="/DDWT-Eindopdracht/rooms/account" role="button" class="btn btn-info">Show Opt-ins</a></td>';
              } else {
                  $table_exp .= '<td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id=' . $value['id'] . '" role="button" class="btn btn-info">Show details</a></td>';
              }

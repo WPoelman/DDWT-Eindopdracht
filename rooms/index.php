@@ -155,8 +155,10 @@ $router->get('/account', function () use ($db, $nav, $username) {
     $full_name = get_fullname($db, $username);
     if ($_SESSION['role'] == "owner") {
         $room_ids  = get_rooms_owner_ids($db, $username);
-        $optins = get_optins_owner($db, $room_ids);
-        $optins_table = get_optins_table($optins, $db, True);
+        if(!empty($optins)) {
+            $optins = get_optins_owner($db, $room_ids);
+            $optins_table = get_optins_table($optins, $db, True);
+        }
     }
     else{
         $optins = get_optins_tenant($db, $username);
@@ -331,7 +333,7 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user with check if an image is uploaded */
-    if (isset($_POST['picture'])){
+    if (isset($_FILES['picture'])){
         $feedback = register_user($db, $_POST, $_FILES);
     } else {
         $feedback = register_user($db, $_POST, Null);
@@ -357,7 +359,12 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
         if(check_login() and $_SESSION['role'] == "owner"){
                 $page_subtitle = "Your room listings";
                 $room_ids = get_rooms_owner_ids($db, $_SESSION['username']);
-                $page_content = get_rooms_table(get_rooms_owner($db, $room_ids), True);
+                if(empty($room_ids)){
+                    $page_content = "You don't have any rooms yet.";
+                }
+                else {
+                    $page_content = get_rooms_table(get_rooms_owner($db, $room_ids), True);
+                }
         }
         else{
             $page_subtitle = "Overview of all the rooms";
@@ -461,7 +468,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->post('/add', function () use ($db, $username) {
 
         /* Add room to database with check if a picture is added */
-        if (isset($_POST['picture'])){
+        if (isset($_FILES['picture'])){
             $feedback = add_room($db, $_POST, $username, $_FILES);
         } else {
             $feedback = add_room($db, $_POST, $username, Null);
