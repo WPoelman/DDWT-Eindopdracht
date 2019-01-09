@@ -400,9 +400,12 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
             $display_buttons = True;
         }
 
+        $check_optin = check_optins($db, $room_id, $username);
 //        /* Check if the user is allowed to opt-in */
         if ($_SESSION['role'] == 'tenant') {
-            $right_column = use_template('optin');
+            if($check_optin) {
+                $right_column = use_template('optin');
+            }
         }
 
         /* Page info */

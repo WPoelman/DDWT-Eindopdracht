@@ -103,6 +103,7 @@ function get_rooms($pdo){
 }
 
 /**
+ * Gets all IDS from the rooms of that owner
  * @param $pdo
  * @param $username
  * @return array
@@ -511,6 +512,12 @@ function log_in($pdo, $form_data){
     }
 }
 
+/**
+ * Add a optin to the database
+ * @param $pdo
+ * @param $optin_info
+ * @return array
+ */
 function add_optin($pdo, $optin_info){
     if (
         empty($optin_info['username']) or
@@ -827,6 +834,25 @@ function get_optins_tenant($pdo, $username){
 }
 
 /**
+ * Checks if user already has an optin on a specific room
+ * @param $pdo
+ * @param $room_id
+ * @param $username
+ * @return bool
+ */
+function check_optins($pdo, $room_id, $username){
+    $stmt = $pdo->prepare('SELECT * FROM opt_in WHERE id = ? AND username = ?');
+    $stmt->execute([$room_id, $username]);
+    $optins = $stmt->fetch();
+    if(empty($optins)){
+        return True;
+    }
+    else{
+        return False;
+    }
+}
+
+/**
  *
  * @param $pdo
  * @param $room_ids
@@ -855,7 +881,7 @@ function get_rooms_owner($pdo, $room_ids){
 
 
 /**
- *
+ * gets all of the optins of a tenant
  * @param $pdo
  * @param $room_ids
  * @return array
@@ -884,7 +910,9 @@ function get_optins_owner($pdo, $room_ids){
 /**
  * Makes a table for all given opt-ins
  * @param $opt_ins
- * @return string table
+ * @param $pdo
+ * @param $tablestyle
+ * @return string
  */
 function get_optins_table($opt_ins, $pdo,  $tablestyle){
     $table_exp = '
