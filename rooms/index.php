@@ -170,7 +170,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
     $page_subtitle = "View and edit your account information";
     $right_column = True;
     $display_buttons = True;
-
+    
     /* Page content */
     $page_content = "Your info";
     $name = $user_info['username'];
@@ -181,6 +181,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
     $role = $user_info['role'];
     $profession = $user_info['profession'];
     $studies = $user_info['studies'];
+    $language = implode(" ", get_user_lang($db, $username));
     $biography = $user_info['biography'];
     $picture = $user_info['profile_picture'];
 
@@ -224,12 +225,11 @@ $router->get('/account_view', function () use ($db, $nav) {
     $role = $user_info['role'];
     $profession = $user_info['profession'];
     $studies = $user_info['studies'];
+    $language = implode(" ", get_user_lang($db, $username));
     $biography = $user_info['biography'];
     $picture = $user_info['profile_picture'];
 
-
     $navigation = get_navigation($nav, null);
-
 
     /* Choose Template */
     include use_template('account');
