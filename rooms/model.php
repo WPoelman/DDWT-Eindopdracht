@@ -759,8 +759,8 @@ function edit_room($pdo, $room_info, $room_info_old, $username)
 
 /**
  * Get all the opt-ins of a specific user
- * @param $pdo
- * @param $username
+ * @param object $pdo
+ * @param string $username
  * @return array with all opt-ins
  */
 function get_optins($pdo, $username){
@@ -779,8 +779,8 @@ function get_optins($pdo, $username){
 
 /**
  * Makes a table for all given opt-ins
- * @param $opt_ins
- * @param $user_role
+ * @param array $opt_ins
+ * @param string $user_role
  * @return string table of all opt-ins of user
  */
 function get_optins_table($opt_ins, $user_role){
@@ -987,9 +987,8 @@ function logout_user() {
 
 /**
  * Creats HTML alert code with information about the success or failure
- * @param array feedback
- * @param bool $feedback True if success, False if failure
- * @return string with error
+ * @param array feedback bool
+ * @return string with error message
  */
 function get_error($feedback)
 {
@@ -1005,10 +1004,8 @@ function get_error($feedback)
  * Changes the HTTP Header to a given location
  * @param string $location location to be redirected to
  */
-//TODO Session removed after redirect.
 function redirect($location)
 {
     header(sprintf('Location: %s', $location));
     exit();
 }
-
