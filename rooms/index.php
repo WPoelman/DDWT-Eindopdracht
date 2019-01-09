@@ -155,8 +155,8 @@ $router->get('/account', function () use ($db, $nav, $username) {
     $full_name = get_fullname($db, $username);
     if ($_SESSION['role'] == "owner") {
         $room_ids  = get_rooms_owner_ids($db, $username);
+        $optins = get_optins_owner($db, $room_ids);
         if(!empty($optins)) {
-            $optins = get_optins_owner($db, $room_ids);
             $optins_table = get_optins_table($optins, $db, True);
         }
     }
