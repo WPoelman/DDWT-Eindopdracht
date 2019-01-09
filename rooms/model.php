@@ -37,7 +37,7 @@ function connect_db($host, $db, $user, $pass){
 /**
  * Creates filename to the template
  * @param string $template filename of the template without extension
- * @return string filename template
+ * @return string
  */
 function use_template($template){
     $template_doc = sprintf("views/%s.php", $template);
@@ -46,8 +46,8 @@ function use_template($template){
 
 /**
  * Creates navigation HTML code using given array
- * @param html $template
- * @param int $active_id
+ * @param $template
+ * @param $active_id
  * @return string html code that represents the navigation
  */
 function get_navigation($template, $active_id){
@@ -79,8 +79,8 @@ function get_navigation($template, $active_id){
 
 /**
  * Get rooms from database
- * @param object $pdo
- * @return array rooms
+ * @param $pdo
+ * @return array
  */
 function get_rooms($pdo){
     $stmt = $pdo->prepare('SELECT * FROM room');
@@ -102,11 +102,31 @@ function get_rooms($pdo){
     return $room_info_exp;
 }
 
+/**
+ * @param $pdo
+ * @param $username
+ * @return array
+ */
+function get_rooms_owner_ids($pdo, $username){
+    $stmt = $pdo->prepare('SELECT id FROM room WHERE owner = ? ');
+    $stmt->execute([$username]);
+    $room_info = $stmt->fetchAll();
+    $room_info_exp = Array();
+
+    /* Create array with htmlspecialchars */
+    foreach ($room_info as $key => $room_array){
+        foreach ($room_array as $room_key => $value) {
+            $room_info_exp[$key][$room_key] = htmlspecialchars($value);
+        }
+    }
+    return $room_info_exp;
+}
+
 /** Make room overview table
- * @param array $rooms
+ * @param $rooms
  * @return string $table_exp
  */
-function get_rooms_table($rooms){
+function get_rooms_table($rooms, $tablestyle){
     $table_exp = '
         <table class = "table table-hover">
         <thead>
@@ -115,18 +135,23 @@ function get_rooms_table($rooms){
             <th scope="col" class="col-sm-1"> Size </th>
             <th scope="col" class="col-sm-1"> Price </th>
             <th scope="col" class="col-sm-2"> Photo </th>
+            <th scope="col" class="col-sm-2"></th>
         </tr>
         </thead>
         <tbody>';
-         foreach($rooms as $key => $value){
+         foreach($rooms as $key => $value) {
              $table_exp .= '
         <tr>
-            <th scope="row">'.$value['title'].'</th>
-            <th scope="row">'.$value['size'].'</th>
-            <th scope="row">'.$value['price'].'</th>
-            <th scope="row"><img src="images/rooms/'.$value['picture'].'" class="img-thumbnail" alt="room photo"</th>
-            <td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id='.$value['id'].'" role="button" class="btn btn-info">Show details</a></td>
-        </tr>
+            <th scope="row">' . $value['title'] . '</th>
+            <th scope="row">' . $value['size'] . '</th>
+            <th scope="row">' . $value['price'] . '</th>
+            <th scope="row"><img src="images/rooms/' . $value['picture'] . '" class="img-thumbnail" alt=""</th>';
+             if ($tablestyle) {
+                 $table_exp .= '<td><a href="/DDWT-Eindopdracht/rooms/account" role="button" class="btn btn-info">Show Opt-ins</a></td>';
+             } else {
+                 $table_exp .= '<td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id=' . $value['id'] . '" role="button" class="btn btn-info">Show details</a></td>';
+             }
+             $table_exp .= '</tr>
         ';
          }
     $table_exp .= '
@@ -138,9 +163,9 @@ function get_rooms_table($rooms){
 
 /**
  * Generates an array with room details
- * @param object $pdo
- * @param string $room_id
- * @return array $room_id_exp
+ * @param $pdo
+ * @param $room_id
+ * @return $room_id_exp
  */
 function get_room_details($pdo, $room_id){
     $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ?');
@@ -174,7 +199,7 @@ function get_username(){
 
 /**
  * Checks if user is logged in
- * @return bool to check if logged in or not
+ * @return bool
  */
 function check_login(){
     if (isset($_SESSION['username'])) {
@@ -186,10 +211,11 @@ function check_login(){
 
 /**
  * Gives the users role
- * @return string role or False if not set
+ * @return String role or False if not set
  */
 
 function get_user_role(){
+
     if (isset($_SESSION['role'])){
         return $_SESSION['role'];
     } else {
@@ -197,12 +223,13 @@ function get_user_role(){
     }
 };
 
+
 /**
  * Register new users and assign the values to database
- * @param object $pdo
- * @param array $form_data $_POST form data
- * @param array $file $_FILES post data (profile picture)
- * @return array with feedback message
+ * @param $pdo database object
+ * @param $form_data $_POST form data
+ * @param $file $_FILES post data (profile picture)
+ * @return array
  */
 function register_user($pdo, $form_data, $file){
     /* Check if there are no empty values */
@@ -325,9 +352,9 @@ function register_user($pdo, $form_data, $file){
 
 /**
  * Get full name of users
- * @param object $pdo
- * @param string $username
- * @return string users full name
+ * @param $pdo
+ * @param $username
+ * @return array
  */
 function get_fullname($pdo, $username){
     $stmt = $pdo->prepare('SELECT first_name, last_name FROM user where username = ?');
@@ -338,9 +365,9 @@ function get_fullname($pdo, $username){
 
 /**
  * Gets all info from users
- * @param object $pdo
- * @param string $username
- * @return array user info
+ * @param $pdo
+ * @param $username
+ * @return array
  */
 function get_user_info($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
@@ -357,10 +384,10 @@ function get_user_info($pdo, $username){
 
 /**
  * Changes the password of the user
- * @param object $pdo
- * @param string $username
- * @param array $form_data
- * @return array feedback message
+ * @param $pdo
+ * @param $username
+ * @param $form_data
+ * @return array
  */
 function change_password($pdo, $username, $form_data){
     /* Check if there are no empty values */
@@ -418,9 +445,9 @@ function change_password($pdo, $username, $form_data){
 
 /**
  * Allow an existing user to login using their credentials
- * @param object $pdo
- * @param array $form_data
- * @return array feedback message
+ * @param $pdo
+ * @param $form_data
+ * @return array
  */
 function log_in($pdo, $form_data){
     /* Check if there are no empty values */
@@ -463,7 +490,7 @@ function log_in($pdo, $form_data){
     } else {
         session_start();
         $_SESSION['username'] = $user_info['username'];
-        $_SESSION['role'] = $form_data['role'];
+        $_SESSION['role'] = $user_info['role'];
         $feedback = [
             'type' => 'success',
             'message' => sprintf('%s, you were logged in successfully!',
@@ -509,7 +536,7 @@ function add_optin($pdo, $optin_info){
  * Add room to the database
  * @param object $pdo db object
  * @param array $room_info post array
- * @param int $username user that adds the room
+ * @param integer $username user that adds the room
  * @param mixed $file $_FILES array if there is an image, NULL if not
  * @return array with message feedback
  */
@@ -625,11 +652,11 @@ function add_room($pdo, $room_info, $username, $file)
 }
 
 /**
- * Edit user account
- * @param object $pdo
- * @param array $form_data
- * @param string $username
- * @return array with edited user account
+ * @param $pdo
+ * @param $form_data
+ * @param $file
+ * @param $username
+ * @return array
  */
 function edit_user($pdo, $form_data, $username){
     /* check if all required fields are filled in */
@@ -646,7 +673,7 @@ function edit_user($pdo, $form_data, $username){
         ];
     }
 
-    $stmt = $pdo->prepare("UPDATE user SET username = ?, first_name = ?, last_name = ?, birth_date = ?, sex = ?, e_mail = ?, role = ?, phone_number = ?, studies = ?, profession = ?, biography = ?  WHERE username = ?");
+    $stmt = $pdo->prepare("UPDATE user SET username = ?, first_name = ?, last_name = ?, birth_date = ?, sex = ?, e_mail = ?, phone_number = ?, studies = ?, profession = ?, biography = ?  WHERE username = ?");
     $stmt->execute([
         $form_data['username'],
         $form_data['first_name'],
@@ -654,7 +681,6 @@ function edit_user($pdo, $form_data, $username){
         $form_data['birthdate'],
         $form_data['sex'],
         $form_data['email'],
-        $form_data['role'],
         $form_data['phonenumber'],
         $form_data['studies'],
         $form_data['profession'],
@@ -683,7 +709,7 @@ function edit_user($pdo, $form_data, $username){
  * @param array $room_info post array
  * @param array $room_info_old old room info to look up the address
  * @param integer $username username from the session info
- * @return array with updated room info
+ * @return array
  */
 function edit_room($pdo, $room_info, $room_info_old, $username)
 {
@@ -759,11 +785,11 @@ function edit_room($pdo, $room_info, $room_info_old, $username)
 
 /**
  * Get all the opt-ins of a specific user
- * @param object $pdo
- * @param string $username
- * @return array with all opt-ins
+ * @param $pdo
+ * @param $username
+ * @return array
  */
-function get_optins($pdo, $username){
+function get_optins_tenant($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM opt_in WHERE username = ? ');
     $stmt->execute([$username]);
     $opt_ins = $stmt->fetchAll();
@@ -778,82 +804,116 @@ function get_optins($pdo, $username){
 }
 
 /**
- * Makes a table for all given opt-ins
- * @param array $opt_ins
- * @param string $user_role
- * @return string table of all opt-ins of user
+ *
+ * @param $pdo
+ * @param $room_ids
+ * @return array
  */
-function get_optins_table($opt_ins, $user_role){
-    if ($user_role == 'tenant') {
-        $table_exp_tenant = '
+function get_rooms_owner($pdo, $room_ids){
+    $rooms = Array();
+    foreach($room_ids as $value) {
+        foreach($value as $key => $room_id) {
+            $stmt = $pdo->prepare('SELECT * FROM room WHERE id = ? ');
+            $stmt->execute([$room_id]);
+            array_push($rooms, $stmt->fetch());
+        }
+    }
+
+    $rooms_exp = Array();
+    /* Create array with htmlspecialchars */
+    foreach ($rooms as $key => $optins_array){
+        foreach ($optins_array as $optins_key => $value){
+            $rooms_exp[$key][$optins_key] = htmlspecialchars($value);
+        }
+    }
+    return $rooms_exp;
+
+}
+
+
+/**
+ *
+ * @param $pdo
+ * @param $room_ids
+ * @return array
+ */
+function get_optins_owner($pdo, $room_ids){
+    $opt_ins = Array();
+    foreach($room_ids as $value) {
+        foreach($value as $key => $room_id) {
+            $stmt = $pdo->prepare('SELECT * FROM opt_in WHERE id = ? ');
+            $stmt->execute([$room_id]);
+            array_push($opt_ins, $stmt->fetch());
+        }
+    }
+
+    $opt_ins_exp = Array();
+    /* Create array with htmlspecialchars */
+    foreach ($opt_ins as $key => $optins_array){
+        foreach ($optins_array as $optins_key => $value){
+            $opt_ins_exp[$key][$optins_key] = htmlspecialchars($value);
+        }
+    }
+    return $opt_ins_exp;
+
+}
+
+/**
+ * Makes a table for all given opt-ins
+ * @param $opt_ins
+ * @return string table
+ */
+function get_optins_table($opt_ins, $pdo,  $tablestyle){
+    $table_exp = '
             <table class = "table table-hover">
             <thead>
             <tr>
                 <th scope="col" class="col-sm-6"> Message </th>
-                <th scope="col" class="col-sm-1"> Room </th>
-                <th scope="col" class="col-sm-1"> Delete</th>
-             </tr>
-            </thead>
-            <tbody>';
-        foreach ($opt_ins as $key => $value) {
-            $table_exp_tenant .= '
-            <tr>
-                <td scope="row">' . $value['message'] . '</td>
-                <td scope="row">' . $value['id'] . '</td>
-                <td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
-                    <a href="/DDWT-Eindopdracht/rooms/account"></a>
-                    <input type="hidden" name="room" value=' . $value['id'] . '/>
-                    <button type="submit" class="btn btn-primary"> Delete </button>
-                </form></td>
-            </tr>
-        ';
-        }
-        $table_exp_tenant .= '
-    </tbody>
-    </table>
-    ';
-        return $table_exp_tenant;
-    } else {
-        $table_exp_owner = '
-            <table class = "table table-hover">
-            <thead>
-            <tr>
-                <th scope="col" class="col-sm-5"> Message </th>
-                <th scope="col" class="col-sm-1"> Room </th>
-                <th scope="col" class="col-sm-1"> User</th>
-                <th scope="col" class="col-sm-1"></th>
-                <th scope="col" class="col-sm-1"></th>
-             </tr>
-            </thead>
-            <tbody>';
-        foreach ($opt_ins as $key => $value) {
-            $table_exp_owner .= '
-            <tr>
-                <td scope="row">' . $value['message'] . '</td>
-                <td scope="row">' . $value['id'] . '</td>
-                <td scope="row">' . $value['username'].'</td>
-                <td><a href="/DDWT-Eindopdracht/rooms/account-view/?username=' . $value['username'] . '" role="button" class="btn btn-info"> Show User Details</a></td>
-                <td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
-                    <a href="/DDWT-Eindopdracht/rooms/account"></a>
-                    <input type="hidden" name="room" value=' . $value['id'] . '/>
-                    <button type="submit" class="btn btn-primary"> Delete </button>
-                </form></td>
-            </tr>
-        ';
-        }
-        $table_exp_owner .= '
-    </tbody>
-    </table>
-    ';
-        return $table_exp_owner;
+                <th scope="col" class="col-sm-1"> Room listing </th>';
+
+    if($tablestyle){
+        $table_exp .= '<th scope="col" class="col-sm-6"> User </th>
+                <th scope="col" class="col-sm-1"> Profile </th>';
+
     }
+    else {
+        $table_exp .= '<th scope="col" class="col-sm-1"> Delete</th>';
+    }
+    $table_exp .= '</tr>
+            </thead>
+            <tbody>';
+    foreach ($opt_ins as $key => $value) {
+        $table_exp .= '
+            <tr>
+                <td scope="row">' . $value['message'] . '</td>
+                <td scope="row">' . get_room_details($pdo,$value['id'])['title'] . '</td>';
+
+        if($tablestyle){
+            $table_exp .=  '<td scope="row">' . $value['username'] . '</td>
+                <td scope="row"><a href="/DDWT-Eindopdracht/rooms/account_view/?username='.$value['username'].'" role="button" class="btn btn-info">See Profile</a></td>';
+        }
+        else {
+            $table_exp .= '<td><form action="/DDWT-Eindopdracht/rooms/optin/delete" method="post">
+                    <a href="/DDWT-Eindopdracht/rooms/account"></a>
+                    <input type="hidden" name="room" value=' . $value['id'] . '/>
+                    <button type="submit" class="btn btn-primary"> Delete </button>
+                </form></td>';
+        }
+        $table_exp .= '</tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
 }
 
 /**
  * Removes a user account
- * @param object $pdo
- * @param string $username
- * @return array feedback message
+ * @param $pdo
+ * @param $username
+ * @return array
  */
 function remove_user($pdo, $username){
     /* Get user info to check if there is a picture */
@@ -888,11 +948,11 @@ function remove_user($pdo, $username){
 }
 
 /**
- * Removes an opt-in
+ * Removes an optin
  * @param object $pdo db object
  * @param int $id of room
  * @param string $username username of the owner
- * @return array and feedback message
+ * @return array message
  */
 function remove_optin($pdo, $id, $username)
 {
@@ -918,7 +978,7 @@ function remove_optin($pdo, $id, $username)
  * @param object $pdo db object
  * @param int $room_id id of the to be deleted room
  * @param string $username username of the owner
- * @return array feedback message
+ * @return array message
  */
 function remove_room($pdo, $room_id, $username)
 {
@@ -968,7 +1028,7 @@ function remove_room($pdo, $room_id, $username)
 
 /**
  * Destroys a session of a user
- * @return array feedback message
+ * @return array message
  */
 function logout_user() {
     session_start();
@@ -987,8 +1047,8 @@ function logout_user() {
 
 /**
  * Creats HTML alert code with information about the success or failure
- * @param array feedback bool
- * @return string with error message
+ * @param bool $feedback True if success, False if failure
+ * @return string
  */
 function get_error($feedback)
 {
@@ -1004,8 +1064,10 @@ function get_error($feedback)
  * Changes the HTTP Header to a given location
  * @param string $location location to be redirected to
  */
+//TODO Session removed after redirect.
 function redirect($location)
 {
     header(sprintf('Location: %s', $location));
     exit();
 }
+

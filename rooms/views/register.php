@@ -113,23 +113,16 @@
                             } ?>" name="email" required>
                             </div>
 
+                            <?php if (!isset($user_info)) :?>
                             <label for="inputType" class="col-sm-2 col-form-label">Role</label>
                             <div class="col-sm-3">
                                 <select class="custom-select" name="role">
-                                    <?php if(isset($user_info)) : ?>
-                                        <?php if($user_info['role'] == "owner"):?>
-                                            <option value="owner" selected>Owner</option>
-                                            <option  value="tenant">Tenant</option>
-                                        <?php else: ?>
-                                            <option value="owner" >Owner</option>
-                                            <option  value="tenant" selected>Tenant</option>
-                                        <?php endif; ?>
-                                    <?php else: ?>
-                                        <option value="owner">Owner</option>
-                                        <option  value="tenant">Tenant</option>
-                                    <?php endif; ?>
+                                   <option value="owner">Owner</option>
+                                   <option  value="tenant">Tenant</option>
                                 </select>
                             </div>
+                            <?php endif; ?>
+
                         </div>
                         <div class="form-group row">
                             <label for="phonenumber" class="col-sm-2 col-form-label">Phonenumber</label>
@@ -162,6 +155,7 @@
                             } ?>" name="biography"></textarea>
                             </div>
                         </div>
+                        <?php if (!isset ($user_info)) :?>
                         <div class="form-group row">
                             <label for="picture" class="col-sm-2 col-form-label">Upload a profile picture</label>
                             <div class="col-sm-4">
@@ -170,6 +164,8 @@
                                 } ?>" name="picture">
                             </div>
                         </div>
+                        <?php endif; ?>
+
                         <button type="submit" name="Submit" class="btn btn-info"><?php echo $submit_btn; ?></button>
                     </form>
 
