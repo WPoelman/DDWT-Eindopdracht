@@ -65,7 +65,7 @@
                 </tr>
                 <tr>
                     <th> Profile picture </th>
-                    <td><img src="images/users/<?=$picture?>" alt=""> </td>
+                    <td><img src="images/users/<?=$picture?>" alt="" width="30%"> </td>
                 </tr>
             </table>
             <?php if ($display_buttons) { ?>
