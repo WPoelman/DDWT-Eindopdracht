@@ -134,7 +134,7 @@
                         <div class="form-group row">
                             <label for="phonenumber" class="col-sm-2 col-form-label">Phonenumber</label>
                             <div class="col-sm-3">
-                            <input type="tel" class="form-control" id="phonenumber" placeholder="0610012002" value="0<?php if (isset($user_info)) {
+                            <input type="tel" class="form-control" id="phonenumber" placeholder="0610012002" value="<?php if (isset($user_info)) {
                                 echo $user_info['phone_number'];
                             } ?>" name="phonenumber" pattern="[0]{1}[6]{1}[0-9]{8}" required>
                             </div>
