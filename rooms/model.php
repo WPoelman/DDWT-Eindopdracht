@@ -248,7 +248,7 @@ function get_user_role(){
  * @param object $pdo database
  * @param array $form_data $_POST form data
  * @param $file $_FILES post data (profile picture)
- * @return array
+ * @return array message
  */
 function register_user($pdo, $form_data, $file){
     /* Check if there are no empty values */
@@ -380,9 +380,9 @@ function register_user($pdo, $form_data, $file){
 
 /**
  * Get full name of users
- * @param object $pdo
- * @param string $username
- * @return array
+ * @param object $pdo database
+ * @param string $username username
+ * @return string fullname info
  */
 function get_fullname($pdo, $username){
     $stmt = $pdo->prepare('SELECT first_name, last_name FROM user where username = ?');
@@ -393,9 +393,9 @@ function get_fullname($pdo, $username){
 
 /**
  * Gets all info from users
- * @param $pdo
- * @param $username
- * @return array
+ * @param $pdo database object
+ * @param $username username
+ * @return array languages from the user
  */
 function get_user_lang($pdo, $username){
     $stmt = $pdo->prepare('SELECT language FROM language WHERE username = ?');
@@ -416,9 +416,9 @@ function get_user_lang($pdo, $username){
 
 /**
  * Gets all info from users
- * @param $pdo
- * @param $username
- * @return array
+ * @param $pdo database object
+ * @param $username username
+ * @return array user info array
  */
 function get_user_info($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM user WHERE username = ?');
@@ -554,9 +554,9 @@ function log_in($pdo, $form_data){
 
 /**
  * Add a optin to the database
- * @param $pdo
- * @param $optin_info
- * @return array
+ * @param $pdo database object
+ * @param $optin_info POST data
+ * @return array message
  */
 function add_optin($pdo, $optin_info){
     if (
@@ -708,12 +708,11 @@ function add_room($pdo, $room_info, $username, $file)
     }
 }
 
-/**
- * @param $pdo
- * @param $form_data
- * @param $file
- * @param $username
- * @return array
+/** Edits the user account info
+ * @param $pdo database object
+ * @param $form_data post data from edit
+ * @param $username username
+ * @return array message
  */
 function edit_user($pdo, $form_data, $username){
     /* check if all required fields are filled in */
@@ -779,7 +778,7 @@ function edit_user($pdo, $form_data, $username){
  * @param array $room_info post array
  * @param array $room_info_old old room info to look up the address
  * @param integer $username username from the session info
- * @return array
+ * @return array message
  */
 function edit_room($pdo, $room_info, $room_info_old, $username)
 {
@@ -855,9 +854,9 @@ function edit_room($pdo, $room_info, $room_info_old, $username)
 
 /**
  * Get all the opt-ins of a specific user
- * @param $pdo
- * @param $username
- * @return array
+ * @param $pdo database object
+ * @param $username string username
+ * @return array of opt in info
  */
 function get_optins_tenant($pdo, $username){
     $stmt = $pdo->prepare('SELECT * FROM opt_in WHERE username = ? ');
@@ -874,10 +873,10 @@ function get_optins_tenant($pdo, $username){
 }
 
 /**
- *
- * @param $pdo
- * @param $room_ids
- * @return array
+ * Gets the rooms the owner owns
+ * @param $pdo database object
+ * @param $room_ids array with room id's
+ * @return array with room info
  */
 function get_rooms_owner($pdo, $room_ids){
     $rooms = Array();
@@ -902,10 +901,10 @@ function get_rooms_owner($pdo, $room_ids){
 
 
 /**
- *
- * @param $pdo
- * @param $room_ids
- * @return array
+ * Gets the opt ins that are done on the rooms the owner owns
+ * @param $pdo database obejct
+ * @param $room_ids array with id's
+ * @return mixed either null if no opt_ins are found and otherwise the opt ins
  */
 function get_optins_owner($pdo, $room_ids){
     $opt_ins = Array();
@@ -916,22 +915,27 @@ function get_optins_owner($pdo, $room_ids){
             array_push($opt_ins, $stmt->fetch());
         }
     }
+    $updated = $stmt->rowCount();
 
     $opt_ins_exp = Array();
     /* Create array with htmlspecialchars */
-    foreach ($opt_ins as $key => $optins_array){
-        foreach ($optins_array as $optins_key => $value){
-            $opt_ins_exp[$key][$optins_key] = htmlspecialchars($value);
+    if ($updated >= 1){
+        foreach ($opt_ins as $key => $optins_array) {
+            foreach ($optins_array as $optins_key => $value) {
+                $opt_ins_exp[$key][$optins_key] = htmlspecialchars($value);
+            }
         }
+        return $opt_ins_exp;
+    } else {
+        return Null;
     }
-    return $opt_ins_exp;
-
 }
 
 /**
- * Makes a table for all given opt-ins
- * @param $opt_ins
- * @return string table
+ * @param $opt_ins array with opt ins
+ * @param $pdo database object
+ * @param $tablestyle boolean to check if tentant or owner
+ * @return string html table
  */
 function get_optins_table($opt_ins, $pdo,  $tablestyle){
     $table_exp = '
@@ -983,9 +987,9 @@ function get_optins_table($opt_ins, $pdo,  $tablestyle){
 
 /**
  * Removes a user account
- * @param $pdo
- * @param $username
- * @return array
+ * @param $pdo databse object
+ * @param $username string username
+ * @return array message
  */
 function remove_user($pdo, $username){
     /* Get user info to check if there is a picture */
@@ -1121,7 +1125,7 @@ function logout_user() {
 }
 
 /**
- * Creats HTML alert code with information about the success or failure
+ * Creates HTML alert code with information about the success or failure
  * @param bool $feedback True if success, False if failure
  * @return string
  */
@@ -1139,7 +1143,6 @@ function get_error($feedback)
  * Changes the HTTP Header to a given location
  * @param string $location location to be redirected to
  */
-//TODO Session removed after redirect.
 function redirect($location)
 {
     header(sprintf('Location: %s', $location));
