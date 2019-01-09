@@ -60,6 +60,12 @@
                     <td> <?=$studies ?> </td>
                 </tr>
                 <tr>
+                    <th> Language </th>
+                    <?php if(isset($language)) :?>
+                    <td> <?=$language; ?> </td>
+                    <?php endif; ?>
+                </tr>
+                <tr>
                     <th> Biography </th>
                     <td> <?=$biography ?> </td>
                 </tr>
