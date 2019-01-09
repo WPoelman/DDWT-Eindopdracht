@@ -170,9 +170,7 @@ $router->get('/account', function () use ($db, $nav, $username) {
     $page_subtitle = "View and edit your account information";
     $right_column = True;
     $display_buttons = True;
-
-    var_dump(get_user_lang($db, $username));
-
+    
     /* Page content */
     $page_content = "Your info";
     $name = $user_info['username'];
