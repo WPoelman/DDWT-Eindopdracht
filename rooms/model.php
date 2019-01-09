@@ -144,8 +144,8 @@ function get_rooms_table($rooms, $tablestyle){
              $table_exp .= '
         <tr>
             <th scope="row">' . $value['title'] . '</th>
-            <th scope="row">' . $value['size'] . '</th>
-            <th scope="row">' . $value['price'] . '</th>
+            <th scope="row">' . $value['size'] . 'm²</th>
+            <th scope="row">€' . $value['price'] . '</th>
             <th scope="row"><img src="images/rooms/' . $value['picture'] . '" class="img-thumbnail" alt=""</th>';
              if ($tablestyle) {
                  $table_exp .= '<td><a href="/DDWT-Eindopdracht/rooms/rooms/room/?room_id=' . $value['id'] . '" role="button" class="btn btn-info">Show details</a></td>
@@ -224,7 +224,6 @@ function get_user_role(){
         return False;
     }
 };
-
 
 /**
  * Register new users and assign the values to database
@@ -878,7 +877,6 @@ function get_rooms_owner($pdo, $room_ids){
     return $rooms_exp;
 
 }
-
 
 /**
  * gets all of the optins of a tenant
