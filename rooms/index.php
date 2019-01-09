@@ -333,7 +333,7 @@ $router->get('/register', function () use ($db, $nav) {
 /* POST route: Register */
 $router->post('/register', function () use ($db) {
     /* Try to register user with check if an image is uploaded */
-    if (isset($_FILES['picture'])){
+    if (isset($_FILES['picture']) and (isset($_POST['picture']))){
         $feedback = register_user($db, $_POST, $_FILES);
     } else {
         $feedback = register_user($db, $_POST, Null);
@@ -471,7 +471,7 @@ $router->mount('/rooms', function () use ($router, $db, $nav, $username) {
     $router->post('/add', function () use ($db, $username) {
 
         /* Add room to database with check if a picture is added */
-        if (isset($_FILES['picture'])){
+        if (isset($_FILES['picture']) and (isset($_POST['picture']))){
             $feedback = add_room($db, $_POST, $username, $_FILES);
         } else {
             $feedback = add_room($db, $_POST, $username, Null);
